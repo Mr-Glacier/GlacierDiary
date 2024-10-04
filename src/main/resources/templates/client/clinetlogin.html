@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glacier Diary Login</title>
+    <link rel="icon" type="image/png" href="../../static/images/favicon.png">
+    <style>
+        body {
+            background: url('https://zedata-bucket.oss-cn-hongkong.aliyuncs.com/yicheApp/beijing.jpg') no-repeat;
+            background-size: 100% 130%;
+        }
+
+        #login_box {
+            width: 20%;
+            height: 400px;
+            background-color: rgba(71, 71, 71, 0.35);
+            margin: 10% auto auto;
+            text-align: center;
+            border-radius: 10px;
+            padding: 50px 50px;
+        }
+
+        .input_box {
+            margin-bottom: 15px;
+            position: relative;
+            height: 60px;
+        }
+        .input_box input {
+            width: calc(100% - 30px); /* 减去按钮宽度 */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        /* 修改占位符文字颜色 */
+        input::placeholder {
+            color: #818181;
+        }
+
+        /* 更改聚焦状态样式 */
+        .input_box input[type="text"]:focus,
+        .input_box input[type="password"]:focus {
+            border-color: #4285F4;
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.5);
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.8); /* 设置背景透明 */
+        }
+
+        /* 添加动画效果（例如，当输入框获得焦点时平滑地改变背景色） */
+        .input_box input:focus {
+            transition: background-color 0.3s ease-in-out;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        h2 {
+            color: #ffffff90;
+            margin-top: 5%;
+        }
+
+
+        span {
+            color: #fff;
+        }
+
+
+
+        button {
+            margin-top: 50px;
+            width: 60%;
+            height: 30px;
+            border-radius: 10px;
+            border: 0;
+            color: #fff;
+            text-align: center;
+            line-height: 30px;
+            font-size: 15px;
+            background-image: linear-gradient(to right, #30cfd0, #813aea);
+        }
+
+        #sign_up {
+            margin-top: 45%;
+            margin-left: 60%;
+        }
+
+        a {
+            color: #b94648;
+        }
+
+
+
+        .error-message {
+            position: fixed;
+            top: 65%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(248, 74, 74, 0.6);
+            padding: 10px 20px;
+            border: 2px solid rgba(175, 0, 0, 0.6);
+            border-radius: 5px;
+            text-align: center;
+            z-index: 9999; /* 确保错误消息位于顶层 */
+            display: none; /* 初始隐藏 */
+            width: 500px;
+            height: auto;
+            line-height: 50px;
+        }
+
+        .success-message {
+            position: fixed;
+            top: 65%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(67, 96, 239, 0.6);
+            padding: 10px 20px;
+            border: 2px solid rgba(17, 135, 208, 0.6);
+            border-radius: 5px;
+            text-align: center;
+            z-index: 9999; /* 确保错误消息位于顶层 */
+            display: none; /* 初始隐藏 */
+            width: 500px;
+            height: auto;
+            line-height: 50px;
+        }
+
+        .register_button {
+            margin-top: 80px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="login_box">
+    <h2>ZEDATA 登录</h2>
+    <form action="#" th:action="@{/login}" th:object="${ZedataUser}" method="post">
+        <div class="input_box">
+            <input type="text" th:field="*{username}" placeholder="请输入用户名"/>
+        </div>
+        <div class="input_box">
+            <input type="password" th:field="*{userpass}" placeholder="请输入密码"/>
+        </div>
+        <button type="submit">登录</button>
+        <br>
+    </form>
+
+
+    <div class="register_button">
+        <a href="/register" style="color: white">用 户 注 册</a>
+    </div>
+</div>
+
+
+<div th:if="${ErrorMsg}" class="error-message" id="ErrorMsg">
+    <p th:text="${ErrorMsg}"
+       style="font-size: 20px;font-weight: lighter;font-family: 'Arial Rounded MT Bold',sans-serif;color: white">
+        错误提示区</p>
+</div>
+<div th:if="${SuccessMsg}" class="success-message" id="SuccessMsg">
+    <p th:text="${SuccessMsg}"
+       style="font-size: 20px;font-weight: lighter;font-family: 'Arial Rounded MT Bold',sans-serif;color: white">
+        正确提示区</p>
+</div>
+<script>
+    // 显示错误消息
+    document.addEventListener('DOMContentLoaded', function () {
+        const errorMessage = document.getElementById('ErrorMsg');
+        if (errorMessage) {
+            errorMessage.style.display = 'block'; // 显示错误消息
+
+            // 2秒后隐藏错误消息
+            setTimeout(function () {
+                errorMessage.style.display = 'none';
+            }, 2000);
+        }
+        const successMessage = document.getElementById('SuccessMsg');
+        if (successMessage) {
+            successMessage.style.display = 'block'; // 显示错误消息
+
+            // 2秒后隐藏错误消息
+            setTimeout(function () {
+                successMessage.style.display = 'none';
+            }, 2000);
+        }
+    });
+    // 当用户点击页面时隐藏错误消息
+    document.addEventListener('click', function () {
+        const errorMessage = document.getElementById('ErrorMsg');
+        if (errorMessage) {
+            errorMessage.style.display = 'none';
+        }
+        const successMessage = document.getElementById('SuccessMsg');
+        if (successMessage) {
+            successMessage.style.display = 'none';
+        }
+    });
+</script>
+</body>
+
+</html>
