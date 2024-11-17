@@ -62,15 +62,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable() // 如果不需要CSRF保护，可以禁用
+//                .anonymous().disable() // 禁用匿名用户机制
                 .authorizeRequests(authorize -> authorize
                         .antMatchers("/static/**").permitAll()
-                        .antMatchers("/api/captcha/**").permitAll() // 验证码
+                        .antMatchers("/api/**").permitAll() // 验证码
                         .antMatchers("/adminWeb/adminLogin").permitAll() // 登录页面
                         .antMatchers("/adminWeb/adminRegister").permitAll() // 注册页面
                         .antMatchers("/adminApi/auth/**").permitAll() // 授权相关接口
                         .antMatchers("/adminApi/**").hasRole("admin") // 管理相关接口
-                        .antMatchers("/client/**").permitAll() // 客户端相关接口
-                        .antMatchers("/clientApi/**").permitAll()
+                        .antMatchers("/client/**").permitAll() // 客户端相关页面允许
+                        .antMatchers("/clientApi/**").permitAll() // 客户端相关接口允许
                         .antMatchers("/").permitAll() // 首页
                         .anyRequest().authenticated()
                 )

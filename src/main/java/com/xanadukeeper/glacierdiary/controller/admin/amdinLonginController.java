@@ -130,4 +130,26 @@ public class amdinLonginController {
             return Result.failed("Internal server error");
         }
     }
+
+    /**
+     * 校验用户是否登录
+     */
+    @GetMapping("/checkAuth")
+    public Map<String, Object> checkAuth() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()&& !authentication.getName().equals("anonymousUser")) {
+            // 用户已登录
+            // 设置用户头像
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("isLoggedIn", true);
+            responseMap.put("username", authentication.getName());
+            return responseMap;
+        } else {
+            // 用户未登录
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("isLoggedIn", false);
+            return responseMap;
+        }
+    }
+
 }

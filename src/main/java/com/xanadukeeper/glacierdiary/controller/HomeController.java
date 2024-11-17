@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
     @GetMapping("/")
     public String home() {
-        return "adminWeb/adminLogin";
+        return "client/home";
     }
 
     @GetMapping("/adminWeb/adminRegister")
@@ -24,6 +24,13 @@ public class HomeController {
 
     @GetMapping("/adminWeb/adminLogin")
     public String showAdminLoginPage(){
+        // 博客客户端登录
         return "adminWeb/adminLogin";
+    }
+
+    @GetMapping("/client/home")
+    public String showClientHomePage(){
+        // 博客客户端首页
+        return "client/home";
     }
 }
