@@ -214,6 +214,7 @@
                         if (data.success) {
                             // 登录成功后的处理
                             showSuccessMessage('登录成功!')
+                            window.location.replace('/client/home');
                         } else {
                             // 登录失败后的处理
                             displayError(data.message, errorMessageDiv)

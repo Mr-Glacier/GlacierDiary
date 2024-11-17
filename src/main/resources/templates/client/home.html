@@ -3,16 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glacier Diary</title>
+    <title>Glacier Diary WebPage</title>
     <link rel="icon" type="image/png" href="../../static/images/favicon.png">
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/css/customStyle.css">
     <style>
         body {
+            width: 100vw;
+            height: auto;
+            margin: 0;
+            overflow-x: hidden;
             background: url("../../static/images/backgroundclinet.jpg") no-repeat;
-            background-size: 100vw 100vh;
+            background-size: cover; /* 使背景图片覆盖整个屏幕 */
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Standard syntax */
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 基本重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
+<nav class="navbar-custom">
+    <!--  网站图标   -->
+    <div class="navbarBrand">
+        <div class="menuTitle">Glacier Diary</div>
+    </div>
+    <div class="menu-container">
+        <a href="#" th:href="@{/}" class="m-item"><img src="../../static/images/icon/icon_home.png" class="menu_icon"
+                                                       alt="首页图标">首页</a>
+        <a href="#" th:href="@{/classification}" class="m-item"><img src="../../static/images/icon/icon_list.png"
+                                                                     class="menu_icon" alt="分类图标">分类</a>
+        <a href="#" th:href="@{/album}" class="m-item"><img src="../../static/images/icon/icon_tage.png"
+                                                            class="menu_icon" alt="标签图标">标签</a>
+        <a href="#" th:href="@{/about}" class="m-item"><img src="../../static/images/icon/icon_openBook.png"
+                                                            class="menu_icon" alt="归档图标">归档</a>
+        <a href="#" th:href="@{/about}" class="m-item"><img src="../../static/images/icon/icon_finger.png"
+                                                            class="menu_icon" alt="关于我">关于</a>
+    </div>
+    <div class="search-container">
+        <form action="#" th:action="@{/search}" method="get">
+            <input type="text" name="searchContent" placeholder="搜索">
+            <button type="submit" class="search-button">搜索</button>
+        </form>
+    </div>
+    <div class="loginNav-container">
+        <div id="user-avatar" class="avatar-placeholder" onclick="toggleUserMenu()">
+            <img id="user-avatar-img" class="avatar-placeholder-img" src="../../static/images/icon/icon_avatar.png"
+                 alt="用户头像">
+        </div>
+        <span id="username" class="username" onclick="toggleUserMenu()">用户名称</span> <!-- 显示用户名 -->
+        <div id="user-menu" class="user-menu hidden">
+            <!--   根据用户状态动态插入内容  -->
+        </div>
+    </div>
+</nav>
+<!--顶部导航栏结束-->
+<!--主体内容-->
+<main>
+    <div class="main-container">
+        <div class="row align-items-start no-gutters">
+            <div class="col-12 col-sm-3 p-3">
+                <div class="personal-card-area">
+                    <div class="personal-card-avatar">
+                        <img id="personal-card-avatar" src="../../static/images/my_avatar.png" alt="User Avatar"
+                             class="avatar">
+                    </div>
 
+                    <div class="personal-card-body">
+                        <div class="personal-card-name" id="username-placeholder">
+                            Mr-Glacier
+                        </div>
+                        <div class="personal-card-signature" id = "signature-placeholder">浮舟沧海 立马昆仑</div>
+                        <div class="personal-card-statistics">
+                            <div class="statistic-item">
+                                博客数量
+                                <br>
+                                <span id="article-count">5</span>
+                            </div>
+                            <div class="statistic-item">
+                                分类数量
+                                <br>
+                                <span id="category-count">3</span>
+                            </div>
+                            <div class="statistic-item">
+                                标签数量
+                                <br>
+                                <span id="tag-count">15</span>
+                            </div>
+                        </div>
+                        <div class="personal-card-social-links">
+                            <img src="../../static/images/icon/email.png" alt="email">
+                            <img src="../../static/images/icon/github.png" alt="github">
+                            <img src="../../static/images/icon/bokeyuan.png" alt="github">
+                            <img src="../../static/images/icon/icon_shouc.png" alt="github">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-7 p-3">
+                <div class="article-list-area"></div>
+            </div>
+            <div class="col-12 col-sm-2 p-3">
+                <div class="article-list-area"></div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<!--底部栏开始-->
+<footer class="footer-custom">
+    <div class="footer-container">
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-6">
+            </div>
+        </div>
+    </div>
+    <div class="footer-container-bottom">
+        <hr>
+        <span class="bottom-text">Copyright &copy;  2024 Glacier Diary. All Rights Reserved.</span>
+        <br>
+        <span class="bottom-text">Powered By SpringBoot & Thymeleaf & Docker</span>
+    </div>
+</footer>
+
+
+<script src="../../static/js/jquery-3.7.1.min.js"></script>
+<script src="../../static/js/snow.js"></script>
+<script>
+    // 请求博主个人信息
+    $(document).ready(function() {
+        $.ajax({
+            url: '/api/personal/getPersonalInfo',
+            type: 'GET',
+            success: function (data) {
+                console.log(data);
+                $('#personal-card-avatar').attr('src', data.data.avatar);
+                // 更新用户名
+                $('#username-placeholder').text(data.data.nickname);
+                // 更新签名
+                $('#signature-placeholder').text(data.data.introduction);
+                // 更新博客数量
+                $('#article-count').text(data.data.blogCount);
+                // 更新分类数量
+                $('#category-count').text(data.data.categoryCount);
+                // 更新标签数量
+                $('#tag-count').text(data.data.tagCount);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error('Error fetching personal info: ', textStatus, errorThrown);
+            }
+        });
+    });
+
+    const snow = new snowFall({maxFlake: 100});
+    snow.start();
+    document.addEventListener('DOMContentLoaded', function () {
+        checkLoginStatus();
+    });
+
+    // 检测用户是否登录
+    function checkLoginStatus() {
+        fetch('/adminApi/auth/checkAuth', {
+            method: 'GET',
+            credentials: 'same-origin' // 包含 cookies
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.isLoggedIn) {
+                    console.log('User is logged in' + data.username);
+                    // 用户已登录
+                    displayUserAvatar(data.username);
+                } else {
+                    // 用户未登录
+                    displayDefaultAvatar();
+                }
+            })
+            .catch(error => {
+                console.error('Error checking login status:', error);
+            });
+    }
+
+    function displayUserAvatar(username) {
+        const avatarImg = document.getElementById('user-avatar-img');
+        avatarImg.src = '../../static/images/my_avatar.png'; // 设置用户的头像URL
+        avatarImg.alt = username;
+        document.getElementById('user-avatar').classList.remove('avatar-placeholder');
+        document.getElementById('username').textContent = '';
+        document.getElementById('username').textContent = username; // 显示用户名
+        document.getElementById('user-menu').innerHTML = `
+        <a href="#" class="user-menu-line" onclick="logout()">注销</a>
+      `;
+    }
+
+    function displayDefaultAvatar() {
+        const avatarImg = document.getElementById('user-avatar-img');
+        avatarImg.src = '../../static/images/icon/icon_avatar.png';
+        avatarImg.alt = '默认头像';
+        document.getElementById('user-avatar').classList.add('avatar-placeholder');
+        document.getElementById('username').textContent = '访客'; // 清空用户名
+        document.getElementById('user-menu').innerHTML = `
+        <a href="/adminWeb/adminLogin" class="user-menu-line">登录</a>
+         <a href="/adminWeb/adminRegister" class="user-menu-line">注册</a>
+        `;
+    }
+
+    function toggleUserMenu() {
+        const menu = document.getElementById('user-menu');
+        if (menu.classList.contains('hidden')) {
+            menu.classList.remove('hidden'); // 显示菜单
+        } else {
+            menu.classList.add('hidden'); // 隐藏菜单
+        }
+    }
+
+    document.addEventListener('click', function (event) {
+        const userMenu = document.getElementById('user-menu');
+        if (!userMenu.contains(event.target) && !document.getElementById('user-avatar').contains(event.target)) {
+            userMenu.classList.add('hidden');
+        }
+    });
+
+
+    function logout() {
+        // 发送POST请求到/logout
+        fetch('/adminApi/auth/logout', {
+            method: 'POST', // 使用POST方法
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    // 登出成功后，重定向到登录页面或其他页面
+                    window.location.replace('/client/home'); // 重定向到主页
+                } else {
+                    // 处理错误
+                    console.error('登出失败');
+                }
+            })
+            .catch(error => {
+                console.error('网络请求错误:', error);
+            });
+    }
+</script>
 </body>
 </html>
