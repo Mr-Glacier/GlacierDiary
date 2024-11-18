@@ -32,6 +32,7 @@ public class CaptchaController {
 
     /**
      * @apiNote 获取验证码,使用Hutool工具生成验证码 限制用户IP请求 ,一个小时超过 60 次则 禁止访问
+     * @author Mr-Glacier
      */
     @GetMapping("/generateCaptcha")
     public void generateCaptcha(HttpServletResponse response,HttpServletRequest request) throws IOException {
@@ -61,6 +62,7 @@ public class CaptchaController {
 
     /**
      * @apiNote 校验验证码
+     * @author Mr-Glacier
      */
     @PostMapping("/validateCaptcha")
     public ResponseEntity<Map<String, Boolean>> validateCaptcha(@RequestBody Map<String, Object> requestBody) {
@@ -89,7 +91,8 @@ public class CaptchaController {
 
 
     /**
-     * 获取IP地址
+     * @apiNote 获取IP地址
+     * @author Mr-Glacier
      */
     private String getIpAddress(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
@@ -110,6 +113,11 @@ public class CaptchaController {
         }
         return ip;
     }
+
+    /**
+     * @apiNote 查询该IP地址在一小时内是否超过最大请求次数
+     * @author Mr-Glacier
+     */
     private boolean isExceedMaxRequests(String ipAddress) {
         try (Jedis jedis = jedisPool.getResource()) {
             String key = "captcha:ip:" + ipAddress;
@@ -122,6 +130,10 @@ public class CaptchaController {
         }
     }
 
+    /**
+     * @apiNote 增加该IP地址的请求计数
+     * @author Mr-Glacier
+     */
     private void incrementRequestCount(String ipAddress) {
         try (Jedis jedis = jedisPool.getResource()) {
             String key = "captcha:ip:" + ipAddress;

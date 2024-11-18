@@ -100,7 +100,7 @@ public class amdinLonginController {
     }
 
     /**
-     * 注册需要注册密钥
+     * @apiNote 注册需要注册密钥 验证
      */
     @PostMapping("/register")
     @ResponseBody
@@ -127,22 +127,22 @@ public class amdinLonginController {
             }
         } else {
             // 注册密钥不匹配，传递错误信息到前端
-            return Result.failed("Internal server error");
+            return Result.failed("您的注册不被允许");
         }
     }
 
     /**
-     * 校验用户是否登录
+     * @apiNote 校验用户是否登录 ,并返回用户的相关信息
      */
     @GetMapping("/checkAuth")
     public Map<String, Object> checkAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()&& !authentication.getName().equals("anonymousUser")) {
-            // 用户已登录
             // 设置用户头像
             Map<String, Object> responseMap = new HashMap<>();
             responseMap.put("isLoggedIn", true);
             responseMap.put("username", authentication.getName());
+            // 还可以继续返回更多相关用户信息
             return responseMap;
         } else {
             // 用户未登录

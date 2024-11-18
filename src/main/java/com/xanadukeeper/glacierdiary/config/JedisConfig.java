@@ -15,22 +15,43 @@ import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
 public class JedisConfig {
-
     @Value("${spring.redis.host}")
     private String host;
 
     @Value("${spring.redis.port}")
     private int port;
 
-    @Value("${spring.redis.database}")
-    private int database;
-
     @Value("${spring.redis.password}")
     private String password;
 
+    @Value("${spring.redis.database}")
+    private int database;
+
+    @Value("${spring.redis.jedis.pool.max-active}")
+    private int maxActive;
+
+    @Value("${spring.redis.jedis.pool.max-idle}")
+    private int maxIdle;
+
+    @Value("${spring.redis.jedis.pool.min-idle}")
+    private int minIdle;
+
+    @Value("${spring.redis.jedis.pool.max-wait}")
+    private long maxWait;
+
     @Bean
-    public JedisPool jedisPool() {
+    public JedisPoolConfig jedisPoolConfig() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        return new JedisPool(poolConfig, host, port, 2000, password, database);
+        poolConfig.setMaxTotal(maxActive);
+        poolConfig.setMaxIdle(maxIdle);
+        poolConfig.setMinIdle(minIdle);
+        poolConfig.setMaxWaitMillis(maxWait);
+        return poolConfig;
     }
+
+    @Bean
+    public JedisPool jedisPool(JedisPoolConfig jedisPoolConfig) {
+        return new JedisPool(jedisPoolConfig, host, port, 2000, password, database);
+    }
+
 }
