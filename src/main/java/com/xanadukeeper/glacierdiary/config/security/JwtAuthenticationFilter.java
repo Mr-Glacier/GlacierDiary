@@ -1,6 +1,6 @@
 package com.xanadukeeper.glacierdiary.config.security;
 
-import com.zedata.project.service.basicServices.AuthUserService;
+import com.xanadukeeper.glacierdiary.service.basicServices.AuthUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

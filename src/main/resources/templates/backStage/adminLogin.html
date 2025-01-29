@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Glacier Diary Login</title>
-    <link rel="icon" type="image/png" href="../../static/images/favicon.png">
-    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../static/css/customStyle.css">
+    <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/customStyle.css}">
 
     <style>
         body {
-            background: url("../../static/images/backgroundclinet.jpg") no-repeat;
+            background: url("/images/backgroundclinet.jpg") no-repeat;
             background-size: 100vw 100vh; /* 占据整个屏幕 */
             -webkit-user-select: none; /* Safari */
             -moz-user-select: none; /* Firefox */
@@ -24,10 +24,10 @@
 <div class="loginContainer">
     <div class="loginTitle">Glacier Diary</div>
     <br>
-    <form id="loginForm" th:action="@{/adminApi/auth/login}" method="post">
+    <form id="loginForm" method="post">
         <div class="login_input_box">
             <div class="login_word">账号 :</div>
-            <input type="text" name="userName" placeholder="请输入用户名"/>
+            <input type="text" name="account" placeholder="请输入用户名"/>
         </div>
         <div class="login_input_box">
             <div class="login_word">密码 :</div>
@@ -36,7 +36,7 @@
         <div class="captcha-box">
             <div class="login_word_captcha">验证码 :</div>
             <input type="text" id="captcha" name="captcha"/>
-            <img src="/api/captcha/generateCaptcha" alt="验证码" id="captchaImage"/>
+            <img src="/api/captcha/getCaptcha" alt="验证码" id="captchaImage"/>
             <a style="font-size:14px" href="javascript:void(0)" onclick="refreshCaptcha()">换一张</a>
             <!-- 隐藏字段用于保存captchaId -->
             <input type="hidden" id="captchaId" name="captchaId" value=""/>
@@ -79,24 +79,31 @@
     function refreshCaptcha() {
         const img = document.getElementById('captchaImage');
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', '/api/captcha/generateCaptcha', true);
-        xhr.responseType = 'blob';
-        xhr.onload = function (e) {
-            if (this.status === 200) {
-                const blob = this.response;
-                img.src = URL.createObjectURL(blob);
-                // 获取captchaId并更新隐藏字段
-                document.getElementById('captchaId').value = this.getResponseHeader('captcha-id');
+        xhr.open('GET', '/api/captcha/getCaptcha', true);
+        xhr.responseType = 'json'; // 设置响应类型为json，以便自动解析
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                try {
+                    const result = xhr.response;
+                    if(result.code && result.data.image) { // 如果返回的是JSON格式
+                        img.src = result.data.image.startsWith('data:image') ? result.data.image : `data:image/png;base64,${result.data.image}`;
+                        document.getElementById('captchaId').value = result.data.captchaId;
+                    } else { // 直接返回图片的情况
+                        img.src = '/api/captcha/getCaptcha?' + new Date().getTime(); // 添加时间戳避免缓存
+                    }
+                } catch(e) {
+                    console.error('Failed to parse JSON response:', e);
+                    displayError('无法解析服务器响应，请稍后再试', document.getElementById('errorMessage'));
+                }
             } else {
-                const errorMessageDiv = document.getElementById('errorMessage');
-                errorMessageDiv.innerHTML = '';
-                hideErrorMessage(errorMessageDiv);
-                displayError('刷新验证码失败', errorMessageDiv);
+                displayError('刷新验证码失败', document.getElementById('errorMessage'));
             }
+        };
+        xhr.onerror = function() {
+            displayError('网络错误', document.getElementById('errorMessage'));
         };
         xhr.send();
     }
-
     // step1: 页面加载时初始化验证码
     window.onload = function () {
         refreshCaptcha();
@@ -106,7 +113,7 @@
     async function validateForm() {
         console.log('调用校验方法 1')
         // 获取表单元素
-        const userName = document.getElementsByName('userName')[0];
+        const account = document.getElementsByName('account')[0];
         const userPassword = document.getElementsByName('userPassword')[0];
         const captcha = document.getElementById('captcha');
         const captchaId = document.getElementById('captchaId').value;
@@ -116,9 +123,9 @@
         hideErrorMessage(errorMessageDiv);
 
         // 检查用户名是否为空
-        if (userName.value === '') {
+        if (account.value === '') {
             displayError('用户名不可为空', errorMessageDiv);
-            userName.focus();
+            account.focus();
             return false;
         }
 
@@ -156,7 +163,7 @@
         });
 
         try {
-            const response = await fetch('/api/captcha/validateCaptcha', {
+            const response = await fetch('/api/captcha/checkCaptcha', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -168,13 +175,12 @@
                 throw new Error('Network response was not ok');
             }
 
+            // 尝试解析JSON并捕获任何潜在的解析错误
             const data = await response.json();
-            if (data.valid) {
-                // 验证码有效时的操作
+            if (data && data.code === "200" && data.data.valid) {
                 console.log("验证码有效");
                 return true;
             } else {
-                // 验证码无效时的操作
                 displayError('验证码无效，请重试', errorMessageDiv);
                 return false;
             }
@@ -205,19 +211,21 @@
                 errorMessageDiv.innerHTML = '';
                 hideErrorMessage(errorMessageDiv);
 
-                fetch('/adminApi/auth/login', { // 使用Fetch API发送POST请求
+                fetch('/oauth/login', { // 使用Fetch API发送POST请求
                     method: 'POST',
                     body: formData
                 })
                     .then(response => response.json()) // 假设服务器返回JSON格式的数据
                     .then(data => {
-                        if (data.success) {
+                        if (data.code === "200") {
                             // 登录成功后的处理
                             showSuccessMessage('登录成功!')
-                            window.location.replace('/client/home');
+                            localStorage.setItem('authToken', data.data);
+                            window.location.href = '/client/home'; // 修改为你想要跳转的目标页面URL
+                            // window.location.replace('/client/home');
                         } else {
                             // 登录失败后的处理
-                            displayError(data.message, errorMessageDiv)
+                            displayError(data.msg, errorMessageDiv)
                             //如果需要，可以在这里刷新验证码
                             refreshCaptcha();
                         }
@@ -272,8 +280,8 @@
 
 </script>
 
-<script src="../../static/js/jquery-3.7.1.min.js"></script>
-<script src="../../static/js/porrer.min.js"></script>
-<script src="../../static/js/bootstrap.min.js"></script>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/porrer.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
 </body>
 </html>

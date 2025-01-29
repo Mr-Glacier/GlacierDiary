@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Glacier Diary WebPage</title>
-    <link rel="icon" type="image/png" href="../../static/images/favicon.png">
-    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../static/css/customStyle.css">
+    <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/customStyle.css}">
     <style>
         body {
             width: 100vw;
             height: auto;
             margin: 0;
             overflow-x: hidden;
-            background: url("../../static/images/backgroundclinet.jpg") no-repeat;
+            background: url("/images/backgroundclinet.jpg") no-repeat;
             background-size: cover; /* 使背景图片覆盖整个屏幕 */
             -webkit-user-select: none; /* Safari */
             -moz-user-select: none; /* Firefox */
@@ -39,15 +39,15 @@
         <div class="menuTitle">Glacier Diary</div>
     </div>
     <div class="menu-container">
-        <a href="#" th:href="@{/}" class="m-item"><img src="../../static/images/icon/icon_home.png" class="menu_icon"
+        <a href="#" th:href="@{/}" class="m-item"><img src="/images/icon/icon_home.png" class="menu_icon"
                                                        alt="首页图标">首页</a>
-        <a href="#" th:href="@{/classification}" class="m-item"><img src="../../static/images/icon/icon_list.png"
+        <a href="#" th:href="@{/classification}" class="m-item"><img src="/images/icon/icon_list.png"
                                                                      class="menu_icon" alt="分类图标">分类</a>
-        <a href="#" th:href="@{/album}" class="m-item"><img src="../../static/images/icon/icon_tage.png"
+        <a href="#" th:href="@{/album}" class="m-item"><img src="/images/icon/icon_tage.png"
                                                             class="menu_icon" alt="标签图标">标签</a>
-        <a href="#" th:href="@{/about}" class="m-item"><img src="../../static/images/icon/icon_openBook.png"
+        <a href="#" th:href="@{/about}" class="m-item"><img src="/images/icon/icon_openBook.png"
                                                             class="menu_icon" alt="归档图标">归档</a>
-        <a href="#" th:href="@{/about}" class="m-item"><img src="../../static/images/icon/icon_finger.png"
+        <a href="#" th:href="@{/about}" class="m-item"><img src="/images/icon/icon_finger.png"
                                                             class="menu_icon" alt="关于我">关于</a>
     </div>
     <div class="search-container">
@@ -58,7 +58,7 @@
     </div>
     <div class="loginNav-container">
         <div id="user-avatar" class="avatar-placeholder" onclick="toggleUserMenu()">
-            <img id="user-avatar-img" class="avatar-placeholder-img" src="../../static/images/icon/icon_avatar.png"
+            <img id="user-avatar-img" class="avatar-placeholder-img" src="/images/icon/icon_avatar.png"
                  alt="用户头像">
         </div>
         <span id="username" class="username" onclick="toggleUserMenu()">用户名称</span> <!-- 显示用户名 -->
@@ -75,7 +75,7 @@
             <div class="col-12 col-sm-3 p-3">
                 <div class="personal-card-area">
                     <div class="personal-card-avatar">
-                        <img id="personal-card-avatar" src="../../static/images/my_avatar.png" alt="User Avatar"
+                        <img id="personal-card-avatar" src="/images/my_avatar.png" alt="User Avatar"
                              class="avatar">
                     </div>
 
@@ -83,7 +83,7 @@
                         <div class="personal-card-name" id="username-placeholder">
                             Mr-Glacier
                         </div>
-                        <div class="personal-card-signature" id = "signature-placeholder">浮舟沧海 立马昆仑</div>
+                        <div class="personal-card-signature" id="signature-placeholder">浮舟沧海 立马昆仑</div>
                         <div class="personal-card-statistics">
                             <div class="statistic-item">
                                 博客数量
@@ -102,10 +102,10 @@
                             </div>
                         </div>
                         <div class="personal-card-social-links">
-                            <img src="../../static/images/icon/email.png" alt="email">
-                            <img src="../../static/images/icon/github.png" alt="github">
-                            <img src="../../static/images/icon/bokeyuan.png" alt="github">
-                            <img src="../../static/images/icon/icon_shouc.png" alt="github">
+                            <img src="/images/icon/email.png" alt="email">
+                            <img src="/images/icon/github.png" alt="github">
+                            <img src="/images/icon/bokeyuan.png" alt="github">
+                            <img src="/images/icon/icon_shouc.png" alt="github">
                         </div>
                     </div>
                 </div>
@@ -140,11 +140,11 @@
 </footer>
 
 
-<script src="../../static/js/jquery-3.7.1.min.js"></script>
-<script src="../../static/js/snow.js"></script>
+<script src="/js/jquery-3.7.1.min.js"></script>
+<script src="/js/snow.js"></script>
 <script>
     // 请求博主个人信息
-    $(document).ready(function() {
+    $(document).ready(function () {
         $.ajax({
             url: '/api/personal/getPersonalInfo',
             type: 'GET',
@@ -198,7 +198,7 @@
 
     function displayUserAvatar(username) {
         const avatarImg = document.getElementById('user-avatar-img');
-        avatarImg.src = '../../static/images/my_avatar.png'; // 设置用户的头像URL
+        avatarImg.src = '/images/my_avatar.png'; // 设置用户的头像URL
         avatarImg.alt = username;
         document.getElementById('user-avatar').classList.remove('avatar-placeholder');
         document.getElementById('username').textContent = '';
@@ -210,7 +210,7 @@
 
     function displayDefaultAvatar() {
         const avatarImg = document.getElementById('user-avatar-img');
-        avatarImg.src = '../../static/images/icon/icon_avatar.png';
+        avatarImg.src = '/images/icon/icon_avatar.png';
         avatarImg.alt = '默认头像';
         document.getElementById('user-avatar').classList.add('avatar-placeholder');
         document.getElementById('username').textContent = '访客'; // 清空用户名

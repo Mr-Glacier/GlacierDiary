@@ -8,9 +8,7 @@ import com.xanadukeeper.glacierdiary.service.basicServices.RedisService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
@@ -62,8 +60,7 @@ public class CaptchaController {
 
             Map<String, String> map = new HashMap<>(2);
             map.put("captchaId", captchaId);
-            map.put("image", base64Img);
-
+            map.put("image", "data:image/png;base64," + base64Img);
             return Result.success(map);
         } catch (Exception e) {
             return Result.failed("验证码获取失败" + e.getMessage());
@@ -71,15 +68,19 @@ public class CaptchaController {
     }
 
     @ApiOperation("验证码校验")
-    @GetMapping("/checkCaptcha")
-    public Result checkCaptcha(String captchaId, String captcha) {
+    @PostMapping("/checkCaptcha")
+    public Result checkCaptcha(@RequestBody Map<String, String> captchaData) {
+        String captcha = captchaData.get("captcha");
+        String captchaId = captchaData.get("captchaId");
         String code = redisService.get(captchaId);
         if (code == null) {
             return Result.failed("验证码已过期");
         }
         if (code.equals(captcha)) {
             redisService.delete(captchaId);
-            return Result.success("校验成功");
+            Map<String,Boolean> map = new HashMap<>();
+            map.put("valid", true);
+            return Result.success(map);
         } else {
             return Result.failed("验证码错误");
         }

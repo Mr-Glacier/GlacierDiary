@@ -45,13 +45,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,
                         "/",
                         "/*.html",
-                        "/favicon.ico",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js",
+                        "/client/**",
+                        "/images/**",
+                        "/images/icon/**",
+                        "/css/**",
+                        "/js/**",
+                        "/fonts/**",
                         "/swagger-resources/**",
-                        "/v2/api-docs/**"
+                        "/v2/api-docs/**",
+                        "/webjars/**"
                 ).permitAll()
+                // 后台登录界面通行
+                .antMatchers("/admin").permitAll()
                 // 对于 oauth 认证模块 无需权限校验
                 .antMatchers("/oauth/**").permitAll()
                 // 对于验证码模块不需要权限校验
@@ -80,7 +85,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService())
                 .passwordEncoder(passwordEncoder());
     }
-
 
 
     /**

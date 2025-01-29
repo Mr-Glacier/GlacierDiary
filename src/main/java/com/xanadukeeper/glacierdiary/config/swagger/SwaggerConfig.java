@@ -42,7 +42,7 @@ public class SwaggerConfig {
                         .build())
                 .groupName("系统服务")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.zedata.project.controller.system")).build();
+                .apis(RequestHandlerSelectors.basePackage("com.xanadukeeper.glacierdiary.controller.system")).build();
 
     }
 
@@ -66,7 +66,7 @@ public class SwaggerConfig {
                         .build())
                 .groupName("管理服务")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.zedata.project.controller.admin")).build()
+                .apis(RequestHandlerSelectors.basePackage("com.xanadukeeper.glacierdiary.controller.admin")).build()
                 .globalOperationParameters(Collections.singletonList(tokenPar.build()));
 
     }
@@ -92,7 +92,7 @@ public class SwaggerConfig {
                         .build())
                 .groupName("业务服务")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.zedata.project.controller.general")).build()
+                .apis(RequestHandlerSelectors.basePackage("com.xanadukeeper.glacierdiary.controller.client")).build()
                 .globalOperationParameters(Collections.singletonList(tokenPar.build()));
     }
 

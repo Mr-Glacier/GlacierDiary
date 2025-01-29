@@ -39,6 +39,8 @@ public class SysUser implements Serializable {
 
     private String roleList;
 
+    private String nickName;
+
     private Date createDate;
 
     private Date updateDate;
