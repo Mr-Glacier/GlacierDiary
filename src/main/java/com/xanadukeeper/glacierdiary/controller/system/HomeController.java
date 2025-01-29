@@ -1,4 +1,4 @@
-package com.xanadukeeper.glacierdiary.controller;
+package com.xanadukeeper.glacierdiary.controller.system;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 /**
  * @author Mr-Glacier
  * @version 1.0
- * @apiNote sss
+ * @apiNote 路由控制类,用于系统页面跳转
  * @since 2024/10/1 21:08
  */
 @Controller

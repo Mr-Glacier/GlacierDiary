@@ -1,9 +1,10 @@
-package com.xanadukeeper.glacierdiary.model.entity;
+package com.xanadukeeper.glacierdiary.entity.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,34 +17,21 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author Mr-Glacier
- * @since 2024-10-01
+ * @since 2025-01-20
  */
 @Data
+@TableName("sys_roles")
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="SystemUser对象", description="")
-public class SystemUser implements Serializable {
+@ApiModel(value="SysRoles对象", description="")
+public class SysRoles implements Serializable {
 
     private static final long serialVersionUID=1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    private String userName;
-
-    private String userPassword;
-
-    private String userNickname;
-
-    private String userEmail;
-
-    private String userPhone;
-
-    private String userRole;
-
-    private Date createTime;
-
-    private Date updateTime;
+    private String roleName;
 
 
 }

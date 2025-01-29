@@ -40,10 +40,10 @@ public class CaptchaController {
         String ipAddress = getIpAddress(request);
 
         // 检查该IP地址在一小时内是否已经超过最大请求次数
-        if (isExceedMaxRequests(ipAddress)) {
-            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Too many requests from this IP address.");
-            return;
-        }
+//        if (isExceedMaxRequests(ipAddress)) {
+//            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Too many requests from this IP address.");
+//            return;
+//        }
         // 生成图片验证码
         LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(200, 60, 4,6);
         // 将图片验证码写入 Response输出流

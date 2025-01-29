@@ -1,7 +1,7 @@
 package com.xanadukeeper.glacierdiary.mapper;
 
-import com.xanadukeeper.glacierdiary.model.entity.SystemUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.xanadukeeper.glacierdiary.entity.po.SysUser;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -10,11 +10,9 @@ import org.apache.ibatis.annotations.Mapper;
  * </p>
  *
  * @author Mr-Glacier
- * @since 2024-10-01
+ * @since 2025-01-20
  */
 @Mapper
-public interface SystemUserMapper extends BaseMapper<SystemUser> {
-
-
+public interface SysUserMapper extends BaseMapper<SysUser> {
 
 }
