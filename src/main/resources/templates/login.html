@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glacier Diary Login</title>
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/login.css">
+    <link rel="stylesheet" href="/static/css/general.css">
+</head>
+
+<body>
+
+<div class="loginContainer">
+    <div class="loginTitle">Glacier Diary</div>
+    <br>
+    <form id="loginForm" method="post">
+        <div class="login_input_box">
+            <div class="login_word">账号 :</div>
+            <input type="text" name="account" placeholder="请输入用户名"/>
+        </div>
+        <div class="login_input_box">
+            <div class="login_word">密码 :</div>
+            <input type="password" name="userPassword" placeholder="请输入密码"/>
+        </div>
+        <div class="captcha-box">
+            <div class="login_word_captcha">验证码 :</div>
+            <input type="text" id="captcha" name="captcha"/>
+            <img src="/static/images/captcha-placeholder.png" alt="验证码" id="captchaImage"
+                 style="width: 100px; height: 40px;"/>
+            <a style="font-size:14px" href="javascript:void(0)" onclick="refreshCaptcha()">换一张</a>
+            <input type="hidden" id="captchaId" name="captchaId" value="demo"/>
+        </div>
+        <button type="submit" id="loginButton">登录</button>
+        <br>
+        <br>
+        <a href="/adminWeb/adminRegister" class="register-link">注册账号</a>
+    </form>
+</div>
+
+
+<!-- 错误信息显示区域 -->
+<div id="errorMessage" class="error-message">错误信息显示区域</div>
+<div id="successMessage" class="success-message">成功信息显示区域</div>
+
+<script>
+    // step1: 页面加载时初始化验证码
+    window.onload = function () {
+        refreshCaptcha();
+    };
+    // input 输入框失去 焦点时不显示 placeholder
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputs = document.querySelectorAll('.login_input_box input');
+        inputs.forEach(function (input) {
+            const originalPlaceholder = input.getAttribute('placeholder');
+
+            input.addEventListener('focus', function () {
+                if (input.value === '') {
+                    this.setAttribute('data-placeholder', originalPlaceholder);
+                    this.removeAttribute('placeholder');
+                }
+            });
+            input.addEventListener('blur', function () {
+                if (input.value === '') {
+                    this.setAttribute('placeholder', this.getAttribute('data-placeholder'));
+                    this.removeAttribute('data-placeholder');
+                }
+            });
+        });
+    });
+
+    // 刷新验证码
+    function refreshCaptcha() {
+        const img = document.getElementById('captchaImage');
+        // 添加时间戳来模拟刷新效果
+        img.src = '/static/images/captcha-placeholder.png?' + new Date().getTime();
+    }
+
+
+    // step2 : 校验验证码,以及用户名密码 后进行登录
+    async function validateForm() {
+        console.log('调用校验方法 1')
+        // 获取表单元素
+        const account = document.getElementsByName('account')[0];
+        const userPassword = document.getElementsByName('userPassword')[0];
+        const captcha = document.getElementById('captcha');
+        const captchaId = document.getElementById('captchaId').value;
+        // 清空之前的错误信息
+        const errorMessageDiv = document.getElementById('errorMessage');
+        errorMessageDiv.innerHTML = '';
+        hideErrorMessage(errorMessageDiv);
+
+        // 检查用户名是否为空
+        if (account.value === '') {
+            displayError('用户名不可为空', errorMessageDiv);
+            account.focus();
+            return false;
+        }
+
+        // 检查密码是否为空
+        if (userPassword.value === '') {
+            displayError('密码不可为空', errorMessageDiv);
+            userPassword.focus();
+            return false;
+        }
+
+        // 检查验证码是否为空
+        if (captcha.value === '') {
+            displayError('验证码不可为空', errorMessageDiv);
+            captcha.focus();
+            refreshCaptcha();
+            return false;
+        }
+        // 如果所有字段都已填写，并且验证码有效，则允许提交表单
+        return true;
+    }
+
+    // 修改validateCaptcha函数以接收参数
+    async function validateCaptcha(captchaInput, captchaIdInput) {
+
+        console.log('调用校验方法 2')
+
+        const errorMessageDiv = document.getElementById('errorMessage');
+        errorMessageDiv.innerHTML = '';
+        hideErrorMessage(errorMessageDiv);
+
+        // 创建请求体
+        const requestBody = JSON.stringify({
+            captcha: captchaInput,
+            captchaId: captchaIdInput
+        });
+
+        try {
+            const response = await fetch('/api/captcha/checkCaptcha', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: requestBody
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            // 尝试解析JSON并捕获任何潜在的解析错误
+            const data = await response.json();
+            if (data && data.code === "200" && data.data.valid) {
+                console.log("验证码有效");
+                return true;
+            } else {
+                displayError('验证码无效，请重试', errorMessageDiv);
+                return false;
+            }
+        } catch (error) {
+            // 网络错误或服务器错误时的操作
+            displayError('网络错误，请稍后再试', errorMessageDiv);
+            console.error('There has been a problem with your fetch operation:', error);
+            return false;
+        }
+    }
+
+
+    // step3 : 提交登录
+    document.getElementById('loginForm').addEventListener('submit', async function (event) {
+        console.log("提交登陆请求");
+        event.preventDefault(); // 阻止默认的表单提交
+        const formData = new FormData(this); // 获取表单数据
+        const stateJudge = await validateForm();
+        if (!stateJudge) {
+            console.log('校验1 错误')
+        } else {
+            const validateCaptchaState = await validateCaptcha(formData.get('captcha'), formData.get('captchaId'));
+            if (!validateCaptchaState) {
+                console.log('校验2 错误');
+                refreshCaptcha();
+            } else {
+                const errorMessageDiv = document.getElementById('errorMessage');
+                errorMessageDiv.innerHTML = '';
+                hideErrorMessage(errorMessageDiv);
+
+                fetch('/oauth/login', { // 使用Fetch API发送POST请求
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json()) // 假设服务器返回JSON格式的数据
+                    .then(data => {
+                        if (data.code === "200") {
+                            // 登录成功后的处理
+                            showSuccessMessage('登录成功!')
+                            localStorage.setItem('authToken', data.data);
+                            window.location.href = '/client/home'; // 修改为你想要跳转的目标页面URL
+                            // window.location.replace('/client/home');
+                        } else {
+                            // 登录失败后的处理
+                            displayError(data.msg, errorMessageDiv)
+                            //如果需要，可以在这里刷新验证码
+                            refreshCaptcha();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('发生错误，请稍后再试。');
+                    });
+            }
+        }
+    });
+
+
+    // 错误框 JS
+    // 显示错误消息
+    function displayError(message, errorDiv) {
+        errorDiv.innerHTML = message;
+        showErrorMessage(errorDiv);
+    }
+
+    function showErrorMessage(errorDiv) {
+        errorDiv.style.display = 'block';
+        setTimeout(() => {
+            hideErrorMessage(errorDiv);
+        }, 5000); // 2 秒后自动隐藏
+    }
+
+    function hideErrorMessage(errorDiv) {
+        errorDiv.style.display = 'none';
+    }
+
+    // 用户点击错误消息时隐藏
+    window.addEventListener('click', function (event) {
+        const errorMessageDiv = document.getElementById('errorMessage');
+        if (event.target !== errorMessageDiv) {
+            hideErrorMessage(errorMessageDiv);
+        } else {
+            console.log('点击了错误消息');
+        }
+    });
+
+    function showSuccessMessage(message) {
+        const errorDiv = document.getElementById('successMessage');
+        errorDiv.innerHTML = '';
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML = message;
+        setTimeout(() => {
+            hideErrorMessage(errorDiv);
+        }, 2000); // 2 秒后自动隐藏
+    }
+
+
+</script>
+
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/porrer.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+</body>
+
+</html>
