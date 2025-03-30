@@ -29,7 +29,7 @@ public class RedisService {
 
 
     /**
-     * 设置缓存信息
+     * 设置缓存信息(默认过期时间)
      *
      * @return 是否设置成功
      */
@@ -67,7 +67,7 @@ public class RedisService {
     }
 
     /**
-     * 发送消息
+     * 发送消息(广播消息,并不用客户端确认)
      */
     public void sendMessage(String channel, Object message) {
         messageRedisTemplate.convertAndSend(channel, message);
