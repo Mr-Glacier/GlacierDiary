@@ -35,48 +35,42 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf()// 由于使用的是JWT，我们这里不需要csrf
-                .disable()
-                .sessionManagement()// 基于token，所以不需要session
+        // 禁用 CSRF（因为我们使用 JWT 进行身份验证）
+        httpSecurity.csrf().disable()
+                // 设置为无状态会话管理（基于 Token，不需要 Session）
+                .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                // 配置请求授权规则
                 .authorizeRequests()
-                // 允许对于网站静态资源的无授权访问
+                // 允许对静态资源的无授权访问
                 .antMatchers(HttpMethod.GET,
-                        "/",
-                        "/*.html",
-                        "/client/**",
-                        "/images/**",
-                        "/images/icon/**",
-                        "/css/**",
-                        "/js/**",
-                        "/fonts/**",
-                        "/swagger-resources/**",
-                        "/v2/api-docs/**",
-                        "/webjars/**"
+                        "/index.html", "/static/**", "/favicon.ico", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/v2/**"
                 ).permitAll()
-                // 后台登录界面通行
-                .antMatchers("/admin/**").permitAll()
-                // 对于 oauth 认证模块 无需权限校验
+                // OAuth 认证模块无需权限校验
                 .antMatchers("/oauth/**").permitAll()
-                // 对于验证码模块不需要权限校验
+                // 验证码模块无需权限校验
                 .antMatchers("/api/captcha/**").permitAll()
-                // admin 请求下需要ADMIN权限
+                // 针对 /api/admin/** 请求需要 ADMIN 权限
                 .antMatchers("/api/admin/**").hasAuthority("ADMIN")
-                //跨域请求会先进行一次options预检请求
-                .antMatchers(HttpMethod.OPTIONS)
-                .permitAll()
-//                .antMatchers("/**")//测试时全部运行访问
-//                .permitAll()
-                .anyRequest()// 除上面外的所有请求全部需要鉴权认证
-                .authenticated();
+                // 跨域预检请求（OPTIONS 方法）无需权限校验
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
+                // 测试时可以放开所有路径（注释掉以启用正式环境配置）
+                 .antMatchers("/**").permitAll()
+                // 除以上路径外的所有请求都需要鉴权认证
+                .anyRequest().authenticated();
+
         // 禁用缓存
         httpSecurity.headers().cacheControl();
-        // 添加JWT filter
+
+        // 添加自定义 JWT 认证过滤器
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        //添加自定义未授权和未登录结果返回
+
+        // 自定义异常处理：未授权和未登录的返回结果
         httpSecurity.exceptionHandling()
+                // 处理未授权访问
                 .accessDeniedHandler(restfulAccessDeniedHandler)
+                // 处理未登录访问
                 .authenticationEntryPoint(restAuthenticationEntryPoint);
     }
 
