@@ -37,8 +37,7 @@
                     <input type="text" id="captcha" name="captcha"
                            class="form-input captcha-input" required>
                     <div class="captcha-image-wrapper">
-                        <img th:src="@{/static/images/captcha-placeholder.png}"
-                             alt="验证码" id="captchaImage" class="captcha-image">
+                        <img src="/images/captcha-placeholder.png" alt="验证码" id="captchaImage" class="captcha-image">
                         <button type="button" class="captcha-refresh"
                                 onclick="refreshCaptcha()" aria-label="刷新验证码">
                             <span class="refresh-icon">↻</span>
@@ -69,6 +68,11 @@
     </div>
 </div>
 
+<script>
+    window.onload = function () {
+        refreshCaptcha();
+    };
+</script>
 <script th:src="@{/js/login.js}" defer></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
 </body>

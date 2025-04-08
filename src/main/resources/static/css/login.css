@@ -51,14 +51,12 @@ body::before {
 .login-container {
     width: 100%;
     max-width: 400px;
-    animation: fadeIn 0.6s ease-out forwards;
-    transform-origin: center;
 }
 
 .login-card {
     background-color: var(--card-bg);
     border-radius: var(--border-radius);
-    padding: 1.5rem;
+    padding: 2.2rem;
     box-shadow: var(--shadow);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(6px);
@@ -67,7 +65,7 @@ body::before {
 }
 
 .login-card:hover {
-    transform: translateY(-3px);
+    /*transform: translateY(-3px);*/
     box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
 }
 
@@ -114,7 +112,7 @@ body::before {
 
 .form-input {
     width: 100%;
-    padding: 10px 14px;
+    padding: 6px 10px;
     border: 1px solid var(--input-border);
     border-radius: var(--border-radius);
     background-color: var(--input-bg);
@@ -196,7 +194,7 @@ body::before {
 /* 按钮样式 */
 .submit-button {
     width: 100%;
-    padding: 11px;
+    padding: 8px;
     background: linear-gradient(135deg, var(--primary-color), #3742fa);
     color: white;
     border: none;
@@ -204,13 +202,13 @@ body::before {
     font-size: 1.2rem;
     font-weight: 400;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
     margin-top: 1rem;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     text-transform: uppercase;
     box-shadow: 0 4px 12px rgba(41, 105, 255, 0.3);
 }
@@ -312,17 +310,6 @@ body::before {
 }
 
 /* 动画效果 */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(5px) scale(0.99); /* 减小位移和缩放变化 */
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
 @keyframes slideDown {
     from {
         opacity: 0;
