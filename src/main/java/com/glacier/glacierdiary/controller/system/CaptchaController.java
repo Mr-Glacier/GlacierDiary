@@ -6,6 +6,7 @@ import com.glacier.glacierdiary.service.basic.RedisService;
 import com.glacier.glacierdiary.utils.CaptchaGenerator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ import java.util.UUID;
  */
 @RestController
 @Api(tags = "验证码模块")
-@RequestMapping("/api/captcha")
+@RequestMapping("/system/captcha")
 public class CaptchaController {
 
     private final RedisService redisService;
@@ -48,7 +49,10 @@ public class CaptchaController {
             String captchaId = UUID.randomUUID().toString().replace("-", "");
             // redis存储验证码结果 ,并且5分钟过期
             redisService.set(captchaId, captcha.get("code"), 5 * 60 * 1000L);
-            return Result.success(captcha);
+            Map<String, String> result = new HashMap<>();
+            result.put("code", captchaId);
+            result.put("image", captcha.get("image"));
+            return Result.success(result);
         } catch (Exception e) {
             return Result.failed(e.getMessage());
         }
@@ -56,9 +60,8 @@ public class CaptchaController {
 
     @ApiOperation("验证码校验")
     @PostMapping("/checkCaptcha")
-    public Result checkCaptcha(@RequestBody Map<String, String> captchaData) {
-        String captcha = captchaData.get("captcha");
-        String captchaId = captchaData.get("captchaId");
+    public Result checkCaptcha(@ApiParam(value = "输入验证码", required = true) @RequestParam String captcha,
+                               @ApiParam(value = "验证码ID", required = true) @RequestParam String captchaId) {
         String code = redisService.get(captchaId);
         if (code == null) {
             return Result.failed("验证码已过期");

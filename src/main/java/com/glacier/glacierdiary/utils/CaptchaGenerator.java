@@ -6,10 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @author Mr-Glacier
@@ -124,6 +121,8 @@ public class CaptchaGenerator {
         // 测试生成验证码
         Map<String, String> result = generateCaptcha();
         System.out.println("生成的验证码：" + result.get("code"));
+        String captchaId = UUID.randomUUID().toString().replace("-", "");
+        System.out.println("验证码ID：" + captchaId);
     }
 
 }

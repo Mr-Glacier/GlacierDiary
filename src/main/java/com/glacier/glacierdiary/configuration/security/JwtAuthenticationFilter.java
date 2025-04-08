@@ -1,6 +1,7 @@
 package com.glacier.glacierdiary.configuration.security;
 
 import com.glacier.glacierdiary.service.basic.AuthUserServiceImpl;
+import com.glacier.glacierdiary.service.basic.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,9 +31,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private AuthUserServiceImpl authUserService;
 
-    public JwtAuthenticationFilter(JwtTokenUtil jwtTokenUtil, AuthUserServiceImpl authUserService) {
+    private RedisService redisService;
+
+    public JwtAuthenticationFilter(JwtTokenUtil jwtTokenUtil, AuthUserServiceImpl authUserService, RedisService redisService) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.authUserService = authUserService;
+        this.redisService = redisService;
     }
 
     @Override
@@ -42,9 +46,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = request.getHeader("Authorization");
         String tokenHead = "Bearer ";
+
         if (token != null && token.startsWith(tokenHead)) {
             String authToken = token.substring(tokenHead.length());
             String username = jwtTokenUtil.getUserNameFromToken(authToken);
+
+            // 验证Token是否在黑名单
+            String jti = jwtTokenUtil.getJti(authToken);
+            if (redisService.get("logout:" + jti) != null) {
+                LOGGER.info("Token is in blacklist, user:{}", username);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
             LOGGER.info("checking username:{}", username);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = authUserService.loadUserByUsername(username);

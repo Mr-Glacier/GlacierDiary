@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Mr-Glacier
@@ -44,8 +45,11 @@ public class JwtTokenUtil {
      * 根据负载生成JWT的token
      */
     private String generateToken(Map<String, Object> claims) {
+        // 使用 UUID 作为唯一标识符
+        String jti = UUID.randomUUID().toString();
         return Jwts.builder()
                 .setClaims(claims)
+                .setId(jti)
                 .setExpiration(generateExpirationDate())
                 .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
@@ -110,7 +114,7 @@ public class JwtTokenUtil {
     /**
      * 从token中获取过期时间
      */
-    private Date getExpiredDateFromToken(String token) {
+    public Date getExpiredDateFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
         return claims.getExpiration();
     }
@@ -140,4 +144,13 @@ public class JwtTokenUtil {
         claims.put(CLAIM_KEY_CREATED, new Date());
         return generateToken(claims);
     }
+
+    /**
+     * 获取token中的ID
+     */
+    public String getJti(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims.getId();
+    }
+
 }
