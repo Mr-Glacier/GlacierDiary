@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 // 允许对静态资源的无授权访问
                 .antMatchers(HttpMethod.GET,
-                        "/index.html", "/static/**", "/favicon.ico", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/v2/**"
+                        "/", "/*.html", "/images/**", "/images/icon/**", "/css/**", "/js/**", "/fonts/**", "/swagger-resources/**", "/v2/api-docs/**", "/webjars/**"
                 ).permitAll()
                 // OAuth 认证模块无需权限校验
                 .antMatchers("/oauth/**").permitAll()
@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 跨域预检请求（OPTIONS 方法）无需权限校验
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 // 测试时可以放开所有路径（注释掉以启用正式环境配置）
-                 .antMatchers("/**").permitAll()
+                .antMatchers("/**").permitAll()
                 // 除以上路径外的所有请求都需要鉴权认证
                 .anyRequest().authenticated();
 
@@ -90,6 +90,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
+    /**
+     * 提供 AuthenticationManager Bean，以便在自定义登录逻辑（如 JWT 登录）中使用。
+     */
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

@@ -43,42 +43,37 @@ public class Result<T> implements Serializable {
      * 静态方法：成功返回（带数据）
      */
     public static <T> Result<T> success(T data) {
-        return build(ResultCode.SUCCESS, data);
-    }
-
-    /**
-     * 静态方法：成功返回（自定义数据）
-     */
-    public static <T> Result<T> success(ResultCode resultCode, T data) {
-        return build(resultCode, data);
+        Result<T> result = new Result<>();
+        result.setCode(ResultCode.SUCCESS.getCode());
+        result.setMessage(ResultCode.SUCCESS.getMessage());
+        result.setData(data);
+        return result;
     }
 
     /**
      * 静态方法：失败返回（无数据）
      */
-    public static <T> Result<T> failed(ResultCode resultCode) {
-        return build(resultCode, null);
+    public static <T> Result<T> failed() {
+        return result(ResultCode.INTERNAL_SERVER_ERROR.getCode(), ResultCode.INTERNAL_SERVER_ERROR.getMessage(), null);
     }
 
     /**
-     * 静态方法：失败返回（自定义数据）
+     * 错误返回,并自定义消息
      */
-    public static <T> Result<T> failed(ResultCode resultCode, T data) {
-        return build(resultCode, data);
+    public static <T> Result<T> failed(String msg) {
+        return result(ResultCode.INTERNAL_SERVER_ERROR.getCode(), msg, null);
     }
-
 
     /**
      * 构建结果对象,使用相应码枚举
      */
-    private static <T> Result<T> build(ResultCode resultCode, T data) {
+    private static <T> Result<T> result(Integer code, String msg, T data) {
         Result<T> result = new Result<>();
-        result.setCode(resultCode.getCode());
-        result.setMessage(resultCode.getMessage());
+        result.setCode(code);
         result.setData(data);
+        result.setMessage(msg);
         return result;
     }
-
 
     /**
      * Getter 和 Setter 方法
