@@ -1,0 +1,237 @@
+/* 用于设置登录页面自定义CSS样式
+Date : 2025039
+author : Mr-Glacier
+*/
+
+.loginContainer {
+    width: 27%;
+    height: 400px;
+    background-color: rgba(71, 71, 71, 0.35);
+    margin: 10% auto auto;
+    text-align: center;
+    border-radius: 10px;
+    padding: 50px 50px;
+    position: relative;
+}
+
+.loginTitle {
+    margin-top: -10%;
+    color: white;
+    font-family: 'QwitcherGrypen', sans-serif;
+    font-size: 65px;
+    font-weight: 600;
+}
+
+.login_input_box {
+    display: flex;
+    align-items: center; /* 垂直居中对齐 */
+    margin-bottom: 15px;
+    position: relative;
+    height: 40px;
+}
+
+/* 移除绝对定位，因为我们不再需要它 */
+.login_word {
+    width: 27%;
+    text-align: left;
+    font-family: 'ZCOOLQingKeHuangYou-Regular', sans-serif;
+    color: #ffffff;
+    font-size: 20px; /* 调整字体大小以适应设计 */
+    margin-right: 10px; /* 添加一些右外边距，以便与输入框之间有空间 */
+}
+
+.login_input_box input {
+    height: 80%;
+    width: 100%; /* 输入框占据剩余的所有空间 */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-family: 'RobotoCondensed', sans-serif;
+    font-size: 14px;
+    text-align: left; /* 将文本对齐方式改为左对齐 */
+}
+
+.loginContainer Button {
+    background-color: #3377ff; /* 使用绿色作为按钮颜色 */
+    border: none;
+    color: white;
+    padding: 5px 40px; /* 减少垂直padding，增加水平padding来使按钮更宽更低 */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'ZCOOLQingKeHuangYou-Regular', sans-serif;
+    font-size: 22px;
+    cursor: pointer;
+    border-radius: 10px; /* 更大的圆角以配合扁平化风格 */
+    transition: background-color 0.3s ease; /* 平滑过渡效果 */
+    box-shadow: none; /* 去除阴影 */
+}
+
+.loginContainer Button:hover {
+    background-color: #0054fa;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* 加强阴影 */
+}
+
+
+/* 新增的 :focus 样式 */
+.login_input_box input:focus {
+    outline: none; /* 去除默认的黑色边框 */
+    border: 1px solid #ccc; /* 保持原来的边框样式不变 */
+}
+
+.captcha-box {
+    display: flex;
+    align-items: center; /* 垂直居中对齐 */
+    margin-bottom: 15px;
+    position: relative;
+    height: 40px;
+}
+
+.login_word_captcha {
+    width: 24%;
+    text-align: left;
+    font-family: 'ZCOOLQingKeHuangYou-Regular', sans-serif;
+    color: #ffffff;
+    font-size: 20px;
+}
+
+.captcha-box input {
+    height: 80%;
+    width: 30%; /* 输入框占据剩余的所有空间 */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-family: 'RobotoCondensed', sans-serif;
+    font-size: 14px;
+    text-align: left; /* 将文本对齐方式改为左对齐 */
+}
+
+.captcha-box img {
+    height: 30px; /* 设置验证码图片的高度 */
+    cursor: pointer;
+    margin-left: 15px; /* 增加左边距 */
+}
+
+
+
+
+
+/*错误展示区域*/
+.error-message {
+    position: fixed;
+    color: #131313;
+    font-size: 25px;
+    font-family: 'ZCOOLQingKeHuangYou-Regular', sans-serif;
+    font-style: initial;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(255, 255, 255);
+    padding: 10px 20px;
+    border: 2px solid rgba(255, 90, 90, 0.92);
+    border-radius: 5px;
+    text-align: center;
+    z-index: 9999; /* 确保错误消息位于顶层 */
+    display: none; /* 初始隐藏 */
+    width: 500px;
+    height: auto;
+    line-height: 50px;
+}
+
+.success-message {
+    position: fixed;
+    color: #000000;
+    font-size: 25px;
+    font-family: 'ZCOOLQingKeHuangYou-Regular', sans-serif;
+    font-style: initial;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(255, 255, 255);
+    padding: 10px 20px;
+    border: 2px solid rgb(37, 79, 199);
+    border-radius: 5px;
+    text-align: center;
+    z-index: 9999; /* 确保错误消息位于顶层 */
+    display: none; /* 初始隐藏 */
+    width: 500px;
+    height: auto;
+    line-height: 50px;
+}
+
+
+.back-button {
+    position: absolute; /* 绝对定位以相对于容器定位 */
+    top: 10px; /* 距离顶部固定距离 */
+    left: 10px; /* 距离左边固定距离 */
+    text-decoration: none;
+    color: #fdfdfd; /* 链接颜色 */
+    font-size: 16px; /* 字体大小 */
+    font-weight: bold;
+}
+
+.register-link {
+    margin-top: 20px; /* 在登录按钮下方留出一些空间 */
+    font-size: 14px; /* 文本大小 */
+    color: #aba5fa; /* 与按钮颜色一致或相似的颜色 */
+    text-decoration: none; /* 移除下划线 */
+    transition: color 0.3s ease; /* 颜色变化过渡效果 */
+}
+
+.register-link:hover {
+    color: #31dffa; /* 鼠标悬停时颜色变深 */
+    text-decoration: underline; /* 鼠标悬停时显示下划线 */
+}
+
+
+/*字体引用组*/
+@font-face {
+    font-family: 'ZCOOLQingKeHuangYou-Regular';
+    src: url('../fonts/ZCOOLQingKeHuangYou-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'LongCang';
+    src: url('../fonts/LongCang-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'QwitcherGrypen';
+    src: url('../fonts/QwitcherGrypen-Bold.ttf') format('truetype'),
+    url('../fonts/QwitcherGrypen-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'RobotoCondensed';
+    src: url('../fonts/RobotoCondensed-Italic-VariableFont_wght.ttf') format('truetype'),
+    url('../fonts/RobotoCondensed-VariableFont_wght.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+/*ArchivoBlack-Regular.ttf*/
+@font-face {
+    font-family: 'ArchivoBlack-Regular';
+    src: url('../fonts/ArchivoBlack-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'mao-zhe-dong';
+    src: url('../fonts/mao.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'shanhaiqingfengkai';
+    src: url('../fonts/shanhaiqingfengkai.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
