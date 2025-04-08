@@ -1,176 +1,75 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glacier Diary Login</title>
+    <meta name="description" content="Glacier Diary 登录页面">
+    <title>Glacier Diary - 登录</title>
     <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="preload" th:href="@{/images/backgroundclinet.jpg}" as="image">
 </head>
-<style>
-    /* 通用css样式设计 */
-    body {
-        background: url("/images/backgroundclinet.jpg") no-repeat center center;
-        background-size: cover;
-        min-height: 100vh;
-        user-select: text;
-        margin: 0;
-        padding: 0;
-        display: flex;
-    }
-</style>
 
 <body>
+<div class="login-container">
+    <div class="login-card">
+        <h1 class="login-title">Glacier Diary</h1>
 
-<div class="loginContainer">
-    <div class="loginTitle">Glacier Diary</div>
-    <br>
-    <form id="loginForm" method="post" th:action="@{/oauth/login}">
-        <div class="login_input_box">
-            <div class="login_word">账号 :</div>
-            <input type="text" name="account" placeholder="请输入用户名"/>
-        </div>
-        <div class="login_input_box">
-            <div class="login_word">密码 :</div>
-            <input type="password" name="userPassword" placeholder="请输入密码"/>
-        </div>
-        <div class="captcha-box">
-            <div class="login_word_captcha">验证码 :</div>
-            <input type="text" id="captcha" name="captcha"/>
-            <img th:src="@{/static/images/captcha-placeholder.png}" alt="验证码" id="captchaImage"
-                 style="width: 100px; height: 40px;"/>
-            <a style="font-size:14px" href="javascript:void(0)" onclick="refreshCaptcha()">换一张</a>
-            <input type="hidden" id="captchaId" name="captchaId" value="demo"/>
-        </div>
-        <button type="submit" id="loginButton">登录</button>
-        <br>
-        <br>
-        <a th:href="@{/adminWeb/adminRegister}" class="register-link">注册账号</a>
-    </form>
+        <form id="loginForm" method="post" th:action="@{/oauth/login}" novalidate>
+            <div class="form-group">
+                <label for="account" class="form-label">账号</label>
+                <input type="text" id="account" name="account" class="form-input"
+                       placeholder="用户名" required
+                       aria-describedby="accountHelp">
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">密码</label>
+                <input type="password" id="password" name="userPassword"
+                       class="form-input" placeholder="密码" required>
+            </div>
+
+            <div class="form-group captcha-group">
+                <label for="captcha" class="form-label">验证码</label>
+                <div class="captcha-wrapper">
+                    <input type="text" id="captcha" name="captcha"
+                           class="form-input captcha-input" required>
+                    <div class="captcha-image-wrapper">
+                        <img th:src="@{/static/images/captcha-placeholder.png}"
+                             alt="验证码" id="captchaImage" class="captcha-image">
+                        <button type="button" class="captcha-refresh"
+                                onclick="refreshCaptcha()" aria-label="刷新验证码">
+                            <span class="refresh-icon">↻</span>
+                        </button>
+                    </div>
+                </div>
+                <input type="hidden" id="captchaId" name="captchaId" value="demo">
+            </div>
+
+            <button type="submit" id="loginButton" class="submit-button">
+                <span class="button-text">登录</span>
+                <span class="spinner" aria-hidden="true"></span>
+            </button>
+
+            <div class="login-footer">
+                <a th:href="@{/adminWeb/adminRegister}" class="register-link">
+                    注册账号
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 
+<!-- 消息提示组件 -->
+<div id="messageToast" class="toast-message" role="alert" aria-live="assertive">
+    <div class="toast-content">
+        <span id="toastMessage"></span>
+    </div>
+</div>
 
-<!-- 错误信息显示区域 -->
-<div id="errorMessage" class="error-message">错误信息显示区域</div>
-<div id="successMessage" class="success-message">成功信息显示区域</div>
-
-<script>
-    // step1: 页面加载时初始化验证码
-    window.onload = function () {
-        refreshCaptcha();
-    };
-    // input 输入框失去 焦点时不显示 placeholder
-    document.addEventListener('DOMContentLoaded', function () {
-        const inputs = document.querySelectorAll('.login_input_box input');
-        inputs.forEach(function (input) {
-            const originalPlaceholder = input.getAttribute('placeholder');
-
-            input.addEventListener('focus', function () {
-                if (input.value === '') {
-                    this.setAttribute('data-placeholder', originalPlaceholder);
-                    this.removeAttribute('placeholder');
-                }
-            });
-            input.addEventListener('blur', function () {
-                if (input.value === '') {
-                    this.setAttribute('placeholder', this.getAttribute('data-placeholder'));
-                    this.removeAttribute('data-placeholder');
-                }
-            });
-        });
-    });
-
-
-    // step3 : 提交登录
-    document.getElementById('loginForm').addEventListener('submit', async function (event) {
-        console.log("提交登陆请求");
-        event.preventDefault(); // 阻止默认的表单提交
-        const formData = new FormData(this); // 获取表单数据
-        const stateJudge = await validateForm();
-        if (!stateJudge) {
-            console.log('校验1 错误')
-        } else {
-            const validateCaptchaState = await validateCaptcha(formData.get('captcha'), formData.get('captchaId'));
-            if (!validateCaptchaState) {
-                console.log('校验2 错误');
-                refreshCaptcha();
-            } else {
-                const errorMessageDiv = document.getElementById('errorMessage');
-                errorMessageDiv.innerHTML = '';
-                hideErrorMessage(errorMessageDiv);
-
-                fetch('/oauth/login', { // 使用Fetch API发送POST请求
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(response => response.json()) // 假设服务器返回JSON格式的数据
-                    .then(data => {
-                        if (data.code === "200") {
-                            // 登录成功后的处理
-                            showSuccessMessage('登录成功!')
-                            localStorage.setItem('authToken', data.data);
-                            window.location.href = '/client/home'; // 修改为你想要跳转的目标页面URL
-                            // window.location.replace('/client/home');
-                        } else {
-                            // 登录失败后的处理
-                            displayError(data.msg, errorMessageDiv)
-                            //如果需要，可以在这里刷新验证码
-                            refreshCaptcha();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('发生错误，请稍后再试。');
-                    });
-            }
-        }
-    });
-
-
-    // 错误框 JS
-    // 显示错误消息
-    function displayError(message, errorDiv) {
-        errorDiv.innerHTML = message;
-        showErrorMessage(errorDiv);
-    }
-
-    function showErrorMessage(errorDiv) {
-        errorDiv.style.display = 'block';
-        setTimeout(() => {
-            hideErrorMessage(errorDiv);
-        }, 5000); // 2 秒后自动隐藏
-    }
-
-    function hideErrorMessage(errorDiv) {
-        errorDiv.style.display = 'none';
-    }
-
-    // 用户点击错误消息时隐藏
-    window.addEventListener('click', function (event) {
-        const errorMessageDiv = document.getElementById('errorMessage');
-        if (event.target !== errorMessageDiv) {
-            hideErrorMessage(errorMessageDiv);
-        } else {
-            console.log('点击了错误消息');
-        }
-    });
-
-    function showSuccessMessage(message) {
-        const errorDiv = document.getElementById('successMessage');
-        errorDiv.innerHTML = '';
-        errorDiv.style.display = 'block';
-        errorDiv.innerHTML = message;
-        setTimeout(() => {
-            hideErrorMessage(errorDiv);
-        }, 2000); // 2 秒后自动隐藏
-    }
-
-
-</script>
-<script th:src="@{/js/login.js}"></script>
-<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/login.js}" defer></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
 </body>
-
 </html>
