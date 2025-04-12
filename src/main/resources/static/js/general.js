@@ -78,6 +78,7 @@ async function validateCaptcha(captchaInput, captchaIdInput) {
         captcha: captchaInput,
         captchaId: captchaIdInput
     });
+    console.log('输入的验证码:' + captchaInput + '  验证码ID:' + captchaIdInput)
     try {
         const response = await fetch('/system/captcha/checkCaptcha', {
             method: 'POST',
@@ -91,6 +92,7 @@ async function validateCaptcha(captchaInput, captchaIdInput) {
         if (result.code === 200) {
             return true;
         } else {
+            await refreshCaptcha();
             handleError(result.message)
         }
     } catch (error) {
@@ -99,3 +101,27 @@ async function validateCaptcha(captchaInput, captchaIdInput) {
 }
 
 // ------ 验证码模块 END ---------
+
+// ------ 检验当前是否登录 START ---------
+async function checkLogin(token) {
+    try {
+        const response = await fetch('/system/oauth/refreshToken', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
+        });
+        const result = await response.json();
+        if (result.code === 200) {
+            localStorage.removeItem('GlacierDiaryToken')
+            localStorage.setItem('GlacierDiaryToken', token)
+            return true;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        return false;
+    }
+}

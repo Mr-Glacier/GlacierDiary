@@ -20,14 +20,14 @@
         <form id="loginForm" method="post" novalidate>
             <div class="form-group">
                 <label for="username" class="form-label">账号</label>
-                <input type="text" id="username" name="username" class="form-input"
+                <input type="text" id="username" name="username" autocomplete="username" class="form-input"
                        placeholder="用户名" required
                        aria-describedby="accountHelp">
             </div>
 
             <div class="form-group">
                 <label for="password" class="form-label">密码</label>
-                <input type="password" id="password" name="userPassword"
+                <input type="password" id="password" name="userPassword" autocomplete="current-password"
                        class="form-input" placeholder="密码" required>
             </div>
 
@@ -70,7 +70,18 @@
 
 <script>
     window.onload = function () {
-        refreshCaptcha();
+        // 登录首页应该验证登录信息是否过期,如果没有过期则跳转到系统首页
+        if (localStorage.getItem('GlacierDiaryToken') === null) {
+            refreshCaptcha();
+        } else {
+            if (checkLogin(localStorage.getItem('GlacierDiaryToken'))) {
+                // token 完成刷新,跳转首页
+                window.history.replaceState({}, '', '/admin/home'); // 替换历史记录
+                window.location.href = '/admin/home';
+            } else {
+                refreshCaptcha();
+            }
+        }
     };
 
     <!--  页面跳转逻辑  -->
@@ -88,7 +99,7 @@
             e.preventDefault();
 
             try {
-                const captcha = document.getElementById('captcha');
+                const captcha = document.getElementById('captcha').value;
                 const captchaId = document.getElementById('captchaId').value;
                 // 验证表单
                 if (!await validateForm()) {
@@ -113,10 +124,14 @@
                 const result = await response.json();
                 console.log('API响应:', result);
                 if (result.code === 200) {
-
+                    // 将token存储到 本地缓存中
+                    localStorage.setItem('GlacierDiaryToken', result.data);
+                    // 跳转到系统首页
+                    window.history.replaceState({}, '', '/admin/home'); // 替换历史记录
+                    window.location.href = '/admin/home';
+                } else {
+                    handleError(result.message);
                 }
-
-
             } catch (error) {
                 console.error('登录请求失败:', error);
             }
