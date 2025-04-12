@@ -33,6 +33,9 @@ public class SysUser implements Serializable {
     @TableField("role")
     private String role;
 
+    /**
+     * 状态：0-正常，1-禁用, 2-删除
+     */
     @TableField("status")
     private Integer status;
 

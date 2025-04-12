@@ -7,6 +7,8 @@ import com.glacier.glacierdiary.service.SysUserService;
 import com.glacier.glacierdiary.service.basic.AuthUserServiceImpl;
 import com.glacier.glacierdiary.service.basic.RedisService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.Map;
 
 
 /**
@@ -51,6 +54,9 @@ public class OauthController {
     public Result<Object> login(@RequestParam(name = "userName") String userName,
                                 @RequestParam(name = "userPassword") String userPassword) {
         try {
+            // 用户状态 0-正常,1-封禁,2-删除
+            int userStatusDelete = 2;
+            int userStatusNormal = 1;
             // 根据账号查询用户
             SysUser currentUser = sysUserService.getUserByUserName(userName);
             if (currentUser == null) {
@@ -63,10 +69,10 @@ public class OauthController {
                 return Result.failed("用户名或密码错误");
             }
             // 校验用户是否被封禁
-            if (currentUser.getStatus() == 0) {
+            if (currentUser.getStatus() == userStatusNormal) {
                 return Result.failed("用户已被封禁");
             }
-            if (currentUser.getStatus() == 2) {
+            if (currentUser.getStatus() == userStatusDelete) {
                 return Result.failed("用户已被删除,请联系管理员!");
             }
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -86,28 +92,45 @@ public class OauthController {
     /**
      * 注册用户,仅允许注册普通用户账号
      *
-     * @param userName 用户名 userPassword 用户密码 registrationKey 注册码
+     * @param params 注册参数 : username, password, confirmPassword, registerCode
      */
     @ApiOperation(value = "用户注册", notes = "通过系统服务只能注册普通用户")
     @PostMapping("/register")
-    @ResponseBody
-    public Result<Object> register(@RequestParam("userName") String userName,
-                                   @RequestParam("userPassword") String userPassword,
-                                   @RequestParam("registrationKey") String registrationKey) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username", required = true, example = "testUser"),
+            @ApiImplicitParam(name = "password", required = true, example = "Test@123"),
+            @ApiImplicitParam(name = "confirmPassword", value = "确认密码", required = true, example = "Test@123"),
+            @ApiImplicitParam(name = "registerCode", value = "注册码", required = true, example = "ABCD-1234")
+    })
+    public Result<Object> register(@RequestBody Map<String, String> params) {
+        String userName = params.get("username");
+        String userPassword = params.get("password");
+        String confirmPassword = params.get("confirmPassword");
+        String registrationKey = params.get("registerCode");
+        String registrationCode = "ZrrVZchmEr2QxzDN98EW";
         try {
-            // 对三个参数进行校验
-            if (userName == null || userPassword == null) {
+            if (!registrationKey.equals(registrationCode)) {
+                return Result.failed("注册码错误");
+            }
+            // 对四个参数进行校验
+            if (userName == null || userPassword == null || confirmPassword == null || registrationKey == null) {
                 return Result.failed("注册相关信息错误");
             }
+            if (!userPassword.equals(confirmPassword)) {
+                return Result.failed("两次密码不一致");
+            }
+
             // 判断用户是否存在
             SysUser sysUser = sysUserService.getUserByUserName(userName);
             if (sysUser != null) {
                 return Result.failed("该账户已存在");
             }
+
             // 用户不存在进行注册
             SysUser registerUser = new SysUser();
             registerUser.setUsername(userName);
             registerUser.setPassword(passwordEncoder.encode(userPassword));
+            registerUser.setStatus(0);
             registerUser.setRole("2");
             if (sysUserService.registerUser(registerUser)) {
                 return Result.success("注册成功");
@@ -141,7 +164,7 @@ public class OauthController {
         long currentTimeMillis = System.currentTimeMillis();
         long expirationTimeMillis = expiration.getTime();
         long expirationDuration = expirationTimeMillis - currentTimeMillis;
-        redisService.set("logout:"+jti, "revoked", expirationDuration);
+        redisService.set("logout:" + jti, "revoked", expirationDuration);
         if (jwtTokenUtil.canRefresh(token)) {
             return Result.success("退出成功");
         } else {

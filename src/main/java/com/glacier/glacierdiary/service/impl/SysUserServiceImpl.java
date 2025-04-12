@@ -33,7 +33,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public SysUser getUserByUserName(String userName) {
         QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username", userName);
+        queryWrapper.eq("user_name", userName);
         return sysUserMapper.selectOne(queryWrapper);
     }
 
@@ -62,7 +62,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public boolean deleteUser(String account) {
         try {
             UpdateWrapper<SysUser> updateWrapper = new UpdateWrapper<>();
-            updateWrapper.eq("account", account);
+            updateWrapper.eq("user_name", account);
             updateWrapper.set("status", 2);
             int rowsAffected = sysUserMapper.update(null, updateWrapper);
             if (rowsAffected > 0) {

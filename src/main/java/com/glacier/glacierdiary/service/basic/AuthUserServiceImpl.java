@@ -54,7 +54,7 @@ public class AuthUserServiceImpl implements UserDetailsService {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-
+        // 构建 oauth 用户信息
         return User.withUsername(user.getUsername())
                 // 因为密码注册的时候 就已经进行了加密，所以这里直接返回即可
                 // {noop}表示不进行密码编码

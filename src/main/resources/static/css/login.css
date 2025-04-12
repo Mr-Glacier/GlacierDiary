@@ -294,15 +294,23 @@ body::before {
     width: max-content;
     animation: slideDown 0.4s ease-out;
     font-weight: 500;
-    border-left: 4px solid transparent;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
 }
 
 .toast-message.error {
-    border-left-color: var(--error-color);
+    border-left-color: var(--error-color) ;
+    border-right-color: var(--error-color) ;
 }
 
 .toast-message.success {
-    border-left-color: var(--success-color);
+    border-left-color: var(--success-color) ;
+    border-right-color: var(--success-color) ;
+}
+
+.toast-message.loading {
+    border-left-color: var(--input-border) ;
+    border-right-color: var(--input-border) ;
 }
 
 .toast-content {

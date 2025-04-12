@@ -16,12 +16,12 @@
 <div class="login-container">
     <div class="login-card">
         <h1 class="login-title">Glacier Diary</h1>
-
-        <form id="registerForm" method="post" th:action="@{/oauth/register}" novalidate>
+        <form id="registerForm" novalidate>
             <div class="form-group">
                 <label for="username" class="form-label">用户名</label>
                 <input type="text" id="username" name="username" class="form-input"
                        placeholder="请输入用户名" required
+                       autocomplete="username"
                        aria-describedby="usernameHelp">
                 <small id="usernameHelp" class="form-text">4-16位字母、数字或下划线</small>
             </div>
@@ -30,6 +30,7 @@
                 <label for="password" class="form-label">密码</label>
                 <input type="password" id="password" name="password"
                        class="form-input" placeholder="请输入密码" required
+                       autocomplete="new-password"
                        aria-describedby="passwordHelp">
                 <small id="passwordHelp" class="form-text">至少8位，包含字母和数字</small>
             </div>
@@ -37,16 +38,19 @@
             <div class="form-group">
                 <label for="confirmPassword" class="form-label">确认密码</label>
                 <input type="password" id="confirmPassword" name="confirmPassword"
-                       class="form-input" placeholder="请再次输入密码" required>
+                       class="form-input" placeholder="请再次输入密码" required
+                       autocomplete="new-password">
             </div>
 
             <div class="form-group">
                 <label for="registerCode" class="form-label">注册码</label>
                 <input type="text" id="registerCode" name="registerCode"
-                       class="form-input" placeholder="请输入注册码" required>
+                       class="form-input" placeholder="请输入注册码" required
+                       autocomplete="off">
                 <small class="form-text">请联系管理员获取注册码</small>
             </div>
-            <button type="submit" id="registerButton" class="submit-button">
+
+            <button type="button" id="registerButton" class="submit-button">
                 <span class="button-text">注册</span>
                 <span class="spinner" aria-hidden="true"></span>
             </button>
@@ -61,6 +65,7 @@
     </div>
 </div>
 
+
 <!-- 消息提示组件 -->
 <div id="messageToast" class="toast-message" role="alert" aria-live="assertive">
     <div class="toast-content">
@@ -74,7 +79,95 @@
         window.history.replaceState({}, '', '/login'); // 替换历史记录
         window.location.href = '/login';
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const registerForm = document.getElementById('registerForm');
+        const registerButton = document.getElementById('registerButton');
+        const spinner = registerButton.querySelector('.spinner');
+        const buttonText = registerButton.querySelector('.button-text');
+        registerButton.addEventListener('click', handleRegister);
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            // 验证表单
+            if (!validateForm()) {
+                return;
+            }
+
+
+            try {
+                const formData = JSON.stringify({
+                    username: document.getElementById('username').value.trim(),
+                    password: document.getElementById('password').value,
+                    confirmPassword: document.getElementById('confirmPassword').value,
+                    registerCode: document.getElementById('registerCode').value.trim()
+                });
+                console.log(formData)
+                const response = await fetch('/oauth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+                console.log('API响应:', result); // 调试关键点
+                if (result.code === 200) {
+                    handleSuccess('注册成功...即将跳转登录页面')
+                    setTimeout(() => {
+                        redirectToLogin();
+                    }, 1500);
+                } else {
+                    console.log(result.message)
+                    handleError(result.message);
+                }
+            } catch (error) {
+                handleLoading('', false);
+                console.error('注册请求失败:', error);
+                handleError('网络错误，请稍后重试')
+            }
+        }
+
+        // 对申请信息进行验证
+        function validateForm() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const registerCode = document.getElementById('registerCode').value.trim();
+
+            // 用户名验证
+            if (!/^[a-zA-Z0-9_]{4,16}$/.test(username)) {
+                handleError('用户名必须是4-16位字母、数字或下划线');
+                return false;
+            }
+            // 密码至少8位，包含字母和数字，允许特定特殊字符 @#%&!
+            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@#%&!]{8,}$/;
+            // 密码验证
+            if (!passwordRegex.test(password)) {
+                handleError('密码至少8位，且包含字母和数字');
+                return false;
+            }
+
+            // 确认密码
+            if (password !== confirmPassword) {
+                handleError('两次输入的密码不一致');
+                return false;
+            }
+
+            // 注册码验证
+            if (!registerCode) {
+                handleError('请输入注册码');
+                return false;
+            }
+            return true;
+        }
+
+    });
+
 </script>
+<script th:src="@{/js/general.js}" defer></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
 </body>
 </html>
