@@ -1,12 +1,11 @@
 package com.glacier.glacierdiary.controller.system;
 
 import com.glacier.glacierdiary.common.result.Result;
-import com.glacier.glacierdiary.common.result.ResultCode;
+import com.glacier.glacierdiary.entity.DTO.CheckCaptchaDTO;
 import com.glacier.glacierdiary.service.basic.RedisService;
 import com.glacier.glacierdiary.utils.CaptchaGenerator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,14 +59,13 @@ public class CaptchaController {
 
     @ApiOperation("验证码校验")
     @PostMapping("/checkCaptcha")
-    public Result checkCaptcha(@ApiParam(value = "输入验证码", required = true) @RequestParam String captcha,
-                               @ApiParam(value = "验证码ID", required = true) @RequestParam String captchaId) {
-        String code = redisService.get(captchaId);
+    public Result<Void> checkCaptcha(@RequestBody CheckCaptchaDTO checkCaptchaDTO) {
+        String code = redisService.get(checkCaptchaDTO.getCaptchaId());
         if (code == null) {
             return Result.failed("验证码已过期");
         }
-        if (code.equals(captcha)) {
-            redisService.delete(captchaId);
+        if (code.equals(checkCaptchaDTO.getCaptcha())) {
+            redisService.delete(checkCaptchaDTO.getCaptchaId());
             return Result.success();
         } else {
             return Result.failed("验证码错误");

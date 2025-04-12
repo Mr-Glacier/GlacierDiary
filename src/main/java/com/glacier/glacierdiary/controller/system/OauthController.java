@@ -2,6 +2,7 @@ package com.glacier.glacierdiary.controller.system;
 
 import com.glacier.glacierdiary.common.result.Result;
 import com.glacier.glacierdiary.configuration.security.JwtTokenUtil;
+import com.glacier.glacierdiary.entity.DTO.LoginDTO;
 import com.glacier.glacierdiary.entity.SysUser;
 import com.glacier.glacierdiary.service.SysUserService;
 import com.glacier.glacierdiary.service.basic.AuthUserServiceImpl;
@@ -51,21 +52,20 @@ public class OauthController {
      */
     @ApiOperation(value = "用户登录", notes = "此接口用于通过用户名和密码进行用户登录。", response = Result.class, httpMethod = "POST")
     @PostMapping("/login")
-    public Result<Object> login(@RequestParam(name = "userName") String userName,
-                                @RequestParam(name = "userPassword") String userPassword) {
+    public Result<Object> login(@RequestBody LoginDTO loginDTO) {
         try {
             // 用户状态 0-正常,1-封禁,2-删除
             int userStatusDelete = 2;
             int userStatusNormal = 1;
             // 根据账号查询用户
-            SysUser currentUser = sysUserService.getUserByUserName(userName);
+            SysUser currentUser = sysUserService.getUserByUserName(loginDTO.getUsername());
             if (currentUser == null) {
                 return Result.failed("用户不存在");
             }
             // 调用方法加载用户
-            UserDetails userDetails = authUserService.loadUserByUsername(userName);
+            UserDetails userDetails = authUserService.loadUserByUsername(loginDTO.getUsername());
             // 密码校验
-            if (!passwordEncoder.matches(userPassword, userDetails.getPassword())) {
+            if (!passwordEncoder.matches(loginDTO.getPassword(), userDetails.getPassword())) {
                 return Result.failed("用户名或密码错误");
             }
             // 校验用户是否被封禁
