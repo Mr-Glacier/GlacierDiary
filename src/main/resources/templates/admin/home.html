@@ -1,0 +1,560 @@
+<!-- GlacierDiary 后台页面 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glacier Diary adminWeb</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/globalfont.css}">
+</head>
+
+<body>
+<div class="wrapper">
+    <!-- 侧边栏 -->
+    <!-- 修改侧边栏导航 -->
+    <nav id="sidebar" class="sidebar">
+        <div class="sidebar-header"> GlacierDiary</div>
+        <ul class="list-unstyled components">
+            <li class="active">
+                <a href="#" data-page="dashboard"><i class="bi bi-speedometer2"></i> 仪表盘</a>
+            </li>
+            <li>
+                <a href="#" data-page="articles"><i class="bi bi-file-text"></i> 文章管理</a>
+            </li>
+            <li>
+                <a href="#" data-page="layers"><i class="bi bi-layers"></i> 分类管理</a>
+            </li>
+            <li>
+                <a href="#" data-page="tags"><i class="bi bi-tags"></i> 标签管理</a>
+            </li>
+            <li>
+                <a href="#" data-page="files"><i class="bi bi-files"></i> 文件管理</a>
+            </li>
+            <li>
+                <a href="#" data-page="link"><i class="bi bi-link"></i> 友链管理</a>
+            </li>
+            <li>
+                <a href="#" data-page="profile"><i class="bi bi-person"></i> 个人资料</a>
+            </li>
+            <li>
+                <a href="#" data-page="gear"><i class="bi bi-gear"></i> 系统设置</a>
+            </li>
+
+        </ul>
+    </nav>
+    <!-- 添加主要内容区域 -->
+    <div id="content">
+        <!-- 顶部导航栏 -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                    <i class="bi bi-list "></i>
+                </button>
+                <!-- 面包屑导航 -->
+                <nav aria-label="breadcrumb" class="ms-3 flex-grow-1">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item active fs-4" id="current-page">仪表盘</li>
+                    </ol>
+                </nav>
+                <!-- 用户信息和设置 -->
+                <div class="ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> 管理员
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> 个人信息</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> 设置</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#" id="logout"><i class="bi bi-box-arrow-right"></i>
+                                退出登录</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <!-- 内容容器 -->
+        <div class="content-container">
+            <!-- 仪表盘页面 -->
+            <div id="dashboard-page" class="page">
+                <div class="container-fluid h-100">
+                    <!-- 统计卡片行 -->
+                    <div class="row row-cols-1 row-cols-md-4 g-4 mb-4">
+                        <!-- 用户统计卡片 -->
+                        <div class="col">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title text-muted">总用户数</h6>
+                                            <h2 class="mb-0">1,234</h2>
+                                            <p class="text-success mb-0"><i class="bi bi-arrow-up"></i> 12.5%</p>
+                                        </div>
+                                        <div class="text-primary">
+                                            <i class="bi bi-people fs-1"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 文章统计卡片 -->
+                        <div class="col">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title text-muted">文章总数</h6>
+                                            <h2 class="mb-0">328</h2>
+                                            <p class="text-success mb-0"><i class="bi bi-arrow-up"></i> 8.3%</p>
+                                        </div>
+                                        <div class="text-info">
+                                            <i class="bi bi-file-text fs-1"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 访问量统计卡片 -->
+                        <div class="col">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title text-muted">月访问量</h6>
+                                            <h2 class="mb-0">45.2K</h2>
+                                            <p class="text-danger mb-0"><i class="bi bi-arrow-down"></i> 3.2%</p>
+                                        </div>
+                                        <div class="text-warning">
+                                            <i class="bi bi-graph-up fs-1"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 评论统计卡片 -->
+                        <div class="col">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="card-title text-muted">总评论数</h6>
+                                            <h2 class="mb-0">892</h2>
+                                            <p class="text-success mb-0"><i class="bi bi-arrow-up"></i> 5.7%</p>
+                                        </div>
+                                        <div class="text-success">
+                                            <i class="bi bi-chat-dots fs-1"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 图表和数据展示区域 -->
+                    <div class="row">
+                        <!-- 访问趋势图表 -->
+                        <div class="col-md-8 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">访问趋势</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="visitChart" style="height: 300px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 最新动态 -->
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">最新动态</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="activity-feed">
+                                        <div class="feed-item">
+                                            <div class="date">2分钟前</div>
+                                            <div class="text">新用户注册: 张三</div>
+                                        </div>
+                                        <div class="feed-item">
+                                            <div class="date">15分钟前</div>
+                                            <div class="text">新文章发布: 《Vue3最佳实践》</div>
+                                        </div>
+                                        <div class="feed-item">
+                                            <div class="date">1小时前</div>
+                                            <div class="text">系统更新完成</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 文章管理页面 -->
+            <div id="articles-page" class="page">
+                <div class="container-fluid h-100 d-flex flex-column">
+                    <div class="filter-container">
+                        <div class="filter-content">
+                            <!-- 新建文章按钮 -->
+                            <div class="filter-group">
+                                <button class="btn btn-primary w-100">
+                                    <i class="bi bi-plus-lg"></i> 新建文章
+                                </button>
+                            </div>
+                            <!-- 文章状态筛选 -->
+                            <div class="filter-group">
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">所有状态</option>
+                                    <option value="published">已发布</option>
+                                    <option value="draft">草稿</option>
+                                </select>
+                            </div>
+                            <!-- 分类筛选 -->
+                            <div class="filter-group">
+                                <select class="form-select" id="categoryFilter">
+                                    <option value="">所有分类</option>
+                                    <option value="tech">技术</option>
+                                    <option value="life">生活</option>
+                                    <option value="study">学习</option>
+                                </select>
+                            </div>
+                            <!-- 标签筛选 -->
+                            <div class="filter-group">
+                                <select class="form-select" id="tagFilter">
+                                    <option value="">所有标签</option>
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="python">Python</option>
+                                    <option value="vue">Vue</option>
+                                    <option value="react">React</option>
+                                    <option value="docker">Docker</option>
+                                </select>
+                            </div>
+                            <!-- 搜索框 -->
+                            <div class="filter-group search-box">
+                                <input type="text" class="form-control" placeholder="搜索文章标题或内容...">
+                                <button class="btn btn-primary">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- 文章列表容器 -->
+                    <div class="articles-container flex-grow-1">
+                        <div class="row g-3">
+                            <!-- 文章卡片占位 -->
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="article-card">
+                                    <div class="article-header">
+                                        <span class="article-category">技术</span>
+                                        <span class="article-status">已发布</span>
+                                    </div>
+                                    <h5 class="article-title">文章标题示例</h5>
+                                    <div class="article-meta">
+                                        <span><i class="bi bi-calendar3"></i> 2023-06-15</span>
+                                        <span><i class="bi bi-eye"></i> 1,234</span>
+                                    </div>
+                                    <div class="article-actions">
+                                        <button class="btn btn-sm btn-outline-primary"><i
+                                                class="bi bi-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i
+                                                class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="article-card">
+                                    <div class="article-header">
+                                        <span class="article-category">生活</span>
+                                        <span class="article-status">草稿</span>
+                                    </div>
+                                    <h5 class="article-title">另一篇文章标题</h5>
+                                    <div class="article-meta">
+                                        <span><i class="bi bi-calendar3"></i> 2023-06-10</span>
+                                        <span><i class="bi bi-eye"></i> 0</span>
+                                    </div>
+                                    <div class="article-actions">
+                                        <button class="btn btn-sm btn-outline-primary"><i
+                                                class="bi bi-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i
+                                                class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="article-card">
+                                    <div class="article-header">
+                                        <span class="article-category">学习</span>
+                                        <span class="article-status">已发布</span>
+                                    </div>
+                                    <h5 class="article-title">第三篇文章标题</h5>
+                                    <div class="article-meta">
+                                        <span><i class="bi bi-calendar3"></i> 2023-06-05</span>
+                                        <span><i class="bi bi-eye"></i> 567</span>
+                                    </div>
+                                    <div class="article-actions">
+                                        <button class="btn btn-sm btn-outline-primary"><i
+                                                class="bi bi-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i
+                                                class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="article-card">
+                                    <div class="article-header">
+                                        <span class="article-category">技术</span>
+                                        <span class="article-status">已发布</span>
+                                    </div>
+                                    <h5 class="article-title">文章标题示例</h5>
+                                    <div class="article-meta">
+                                        <span><i class="bi bi-calendar3"></i> 2023-06-15</span>
+                                        <span><i class="bi bi-eye"></i> 1,234</span>
+                                    </div>
+                                    <div class="article-actions">
+                                        <button class="btn btn-sm btn-outline-primary"><i
+                                                class="bi bi-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i
+                                                class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="article-card">
+                                    <div class="article-header">
+                                        <span class="article-category">生活</span>
+                                        <span class="article-status">草稿</span>
+                                    </div>
+                                    <h5 class="article-title">另一篇文章标题</h5>
+                                    <div class="article-meta">
+                                        <span><i class="bi bi-calendar3"></i> 2023-06-10</span>
+                                        <span><i class="bi bi-eye"></i> 0</span>
+                                    </div>
+                                    <div class="article-actions">
+                                        <button class="btn btn-sm btn-outline-primary"><i
+                                                class="bi bi-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i
+                                                class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="article-card">
+                                    <div class="article-header">
+                                        <span class="article-category">学习</span>
+                                        <span class="article-status">已发布</span>
+                                    </div>
+                                    <h5 class="article-title">第三篇文章标题</h5>
+                                    <div class="article-meta">
+                                        <span><i class="bi bi-calendar3"></i> 2023-06-05</span>
+                                        <span><i class="bi bi-eye"></i> 567</span>
+                                    </div>
+                                    <div class="article-actions">
+                                        <button class="btn btn-sm btn-outline-primary"><i
+                                                class="bi bi-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i
+                                                class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="article-card">
+                                    <div class="article-header">
+                                        <span class="article-category">技术</span>
+                                        <span class="article-status">已发布</span>
+                                    </div>
+                                    <h5 class="article-title">文章标题示例</h5>
+                                    <div class="article-meta">
+                                        <span><i class="bi bi-calendar3"></i> 2023-06-15</span>
+                                        <span><i class="bi bi-eye"></i> 1,234</span>
+                                    </div>
+                                    <div class="article-actions">
+                                        <button class="btn btn-sm btn-outline-primary"><i
+                                                class="bi bi-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i
+                                                class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="article-card">
+                                    <div class="article-header">
+                                        <span class="article-category">生活</span>
+                                        <span class="article-status">草稿</span>
+                                    </div>
+                                    <h5 class="article-title">另一篇文章标题</h5>
+                                    <div class="article-meta">
+                                        <span><i class="bi bi-calendar3"></i> 2023-06-10</span>
+                                        <span><i class="bi bi-eye"></i> 0</span>
+                                    </div>
+                                    <div class="article-actions">
+                                        <button class="btn btn-sm btn-outline-primary"><i
+                                                class="bi bi-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i
+                                                class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="article-card">
+                                    <div class="article-header">
+                                        <span class="article-category">学习</span>
+                                        <span class="article-status">已发布</span>
+                                    </div>
+                                    <h5 class="article-title">第三篇文章标题</h5>
+                                    <div class="article-meta">
+                                        <span><i class="bi bi-calendar3"></i> 2023-06-05</span>
+                                        <span><i class="bi bi-eye"></i> 567</span>
+                                    </div>
+                                    <div class="article-actions">
+                                        <button class="btn btn-sm btn-outline-primary"><i
+                                                class="bi bi-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i
+                                                class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 分页控制容器 -->
+                    <div class="pagination-container">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <!-- 每页显示数量选择器 -->
+                            <div class="page-size-selector">
+                                <label class="me-2">每页显示:</label>
+                                <select class="form-select form-select-sm" id="pageSizeSelector">
+                                    <option value="10">10条</option>
+                                    <option value="20" selected>20条</option>
+                                    <option value="50">50条</option>
+                                    <option value="100">100条</option>
+                                </select>
+                            </div>
+
+                            <!-- 分页导航 -->
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center mb-0">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1">上一页</a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">下一页</a>
+                                    </li>
+                                </ul>
+                            </nav>
+
+                            <!-- 显示总数信息 -->
+                            <div class="page-info">
+                                显示 <span id="currentPageStart">1</span>-<span id="currentPageEnd">20</span> 共 <span
+                                    id="totalItems">56</span> 条
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 分类管理页面 -->
+            <div id="layers-page" class="page">
+                <!-- 分类列表 -->
+                <div class="col-md-4 h-100 border-end">
+
+                </div>
+                <!-- 文章列表 -->
+                <div class="col-md-8 h-100">
+
+                </div>
+            </div>
+
+            <!-- 标签管理页面 -->
+            <div id="tags-page" class="page">
+                标签管理页面
+            </div>
+
+            <!-- 文件管理页面 -->
+            <div id="files-page" class="page">
+                文件管理页面
+            </div>
+
+            <!-- 友链管理页面 -->
+            <div id="link-page" class="page">
+                友链管理页面
+            </div>
+
+            <!-- 个人资料页面 -->
+            <div id="profile-page" class="page">
+                个人资料页面
+            </div>
+            <!-- 系统设置页面 -->
+            <div id="gear-page" class="page">
+                系统设置页面
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+</style>
+<script>
+    // 侧边栏隐藏功能
+    // 修改侧边栏切换功能
+    document.getElementById('sidebarCollapse').addEventListener('click', function () {
+        const sidebar = document.getElementById('sidebar');
+        this.classList.toggle('active');  // 添加按钮动画
+        sidebar.classList.toggle('active');
+    });
+
+    // 点击菜单项后在移动端自动收起侧边栏
+    document.querySelectorAll('.sidebar a').forEach(link => {
+        link.addEventListener('click', function () {
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('sidebarCollapse').classList.remove('active');
+            }
+        });
+    });
+    // 页面路由功能
+    document.querySelectorAll('[data-page]').forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            const pageId = this.getAttribute('data-page');
+            const pageName = this.textContent.trim(); // 获取菜单项文本内容
+            // 更新标题
+            document.getElementById('current-page').textContent = pageName;
+
+            // 更新侧边栏活动状态
+            document.querySelectorAll('.sidebar li').forEach(item => item.classList.remove('active'));
+            this.parentElement.classList.add('active');
+
+            // 切换页面显示
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            const targetPage = document.getElementById(pageId + '-page');
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+        });
+    });
+    // 页面加载时显示仪表盘
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('dashboard-page').classList.add('active');
+    });
+</script>
+<script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
+</body>
+
+</html>

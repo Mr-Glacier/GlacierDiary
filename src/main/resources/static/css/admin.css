@@ -1,0 +1,515 @@
+/* boday css  */
+html,
+body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: #f4f6f9;
+}
+
+/* 主体页面设计 */
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+/* 侧边菜单栏样式开始 */
+.sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    background: #183e88;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+.sidebar.active {
+    margin-left: -250px;
+}
+
+.sidebar .sidebar-header {
+    padding: 10px;
+    background: #183e88;
+    color: white;
+    font-family: 'QwitcherGrypen', sans-serif;
+    font-size: 40px;
+    text-align: center;
+    user-select: none;
+    /* 禁止用户选择文字 */
+    line-height: 40px;
+}
+
+.sidebar ul.components {
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 水平居中 */
+}
+
+.sidebar ul li {
+    width: 100%;
+    /* 确保列表项宽度占满 */
+    margin: 4px 0;
+    /* 添加间距 */
+}
+
+.sidebar ul li a {
+    padding: 15px 25px;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.8);
+    /* 稍微降低对比度 */
+    font-family: 'chengKaiTi', sans-serif;
+    text-decoration: none;
+    justify-content: flex-start;
+    /* 左对齐 */
+    transition: all 0.3s ease;
+    /* 平滑过渡 */
+    border-radius: 5px;
+    /* 圆角 */
+    margin: 0 10px;
+    /* 左右留白 */
+}
+
+.sidebar ul li a:hover {
+    /* background: #1c53bf; */
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transform: translateX(5px);
+    /* 悬停时微移 */
+}
+
+.sidebar ul li.active>a {
+    /* background: #1c53bf; */
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-weight: 500;
+}
+
+.sidebar ul li a i {
+    margin-right: 10px;
+    font-size: 1.2em;
+    /* 图标稍大 */
+}
+
+/* 侧边菜单栏样式结束 */
+
+
+/* 顶部导航栏设置 */
+.navbar {
+    padding: 15px 25px;
+    background: #fff !important;
+    /* 纯白背景 */
+    border-bottom: 1px solid #e9ecef;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    /* 柔和阴影 */
+    position: sticky;
+    /* 改为粘性定位 */
+    top: 0;
+    /* 固定在顶部 */
+    z-index: 1030;
+}
+
+.navbar .btn-primary {
+    background-color: #1a237e;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+.navbar .btn-secondary {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    color: #495057;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+.dropdown {
+    position: relative;
+    z-index: 1031;
+    /* 确保整个下拉组件层级正确 */
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1030;
+}
+
+.dropdown-item {
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* 图标和文字的间距 */
+    z-index: 2000;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* 顶部导航栏设置结束 */
+
+/* 面包屑导航样式 */
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+    font-family: 'chengKaiTi', sans-serif;
+    /* 修改字体 */
+    font-size: 2.0rem;
+    /* 调整字体大小 */
+}
+
+.breadcrumb-item a {
+    color: #183e88;
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: #495057;
+    font-weight: 300;
+    /* 加粗 */
+    letter-spacing: 1px;
+    /* 字间距 */
+}
+
+.breadcrumb-item+.breadcrumb-item::before {
+    font-size: 1.1rem;
+    padding: 0 0.5rem;
+    color: #6c757d;
+    /* 分隔符颜色 */
+}
+
+/* 面包屑导航样式结束 */
+
+
+
+/* 主要内容区域  */
+#content {
+    width: 100%;
+    min-height: 100vh;
+    transition: all 0.3s;
+    background-color: #ffffff96;
+    z-index: 900;
+    overflow: hidden;
+}
+
+/* 主要展示区域固定高度 */
+.content-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    height: calc(100vh - 70px);
+    /* 减去顶部导航栏的高度 */
+    padding: 20px;
+    overflow: hidden;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+    .sidebar {
+        margin-left: -250px;
+        position: fixed;
+        height: 100vh;
+        z-index: 999;
+        top: 0;
+        /* 确保从顶部开始 */
+        left: 0;
+        /* 从左侧开始 */
+        transition: all 0.3s ease;
+        /* 平滑过渡 */
+        box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+        /* 添加阴影 */
+    }
+
+    .sidebar.active {
+        margin-left: 0;
+    }
+
+    #content {
+        width: 100%;
+        position: relative;
+    }
+
+    /* 添加菜单按钮动画效果 */
+    #sidebarCollapse {
+        transition: transform 0.3s ease;
+    }
+
+    #sidebarCollapse.active {
+        transform: rotate(90deg);
+    }
+
+    .wrapper {
+        position: relative;
+    }
+
+}
+
+
+/* 各个显示区域 page */
+.page {
+    z-index: 900;
+    display: none;
+    height: 100%;
+}
+
+.page.active {
+    display: block;
+}
+
+/* 仪表盘样式 */
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    z-index: 200;
+}
+
+.activity-feed {
+    padding: 15px;
+}
+
+.feed-item {
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.feed-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.feed-item .date {
+    color: #999;
+    font-size: 0.85rem;
+}
+
+.feed-item .text {
+    margin-top: 5px;
+}
+
+.text-success {
+    font-size: 0.875rem;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, .125);
+}
+
+/* 仪表盘样式结束 */
+
+/* 文章管理区域 */
+/* 筛选区域基础样式 */
+.filter-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 15px;
+}
+
+.filter-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    align-items: start;
+}
+
+.filter-group {
+    margin: 0;
+}
+
+.form-select {
+    width: 100%;
+    height: 38px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    appearance: none;
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+}
+
+.search-box .form-control {
+    flex: 1;
+    height: 38px;
+}
+
+.search-box .btn {
+    flex-shrink: 0;
+}
+
+/* 移动端优化样式 */
+@media (max-width: 768px) {
+    .filter-container {
+        padding: 10px;
+        margin-bottom: 15px;
+        position: relative;
+        /* 添加定位上下文 */
+    }
+
+    .filter-content {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .filter-group {
+        width: 100%;
+        position: relative;
+        /* 添加定位上下文 */
+    }
+
+    .form-select {
+        width: 100%;
+        height: 42px;
+        font-size: 16px;
+        padding: 8px 30px 8px 12px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* 修复下拉选项的宽度问题 */
+    .form-select option {
+        width: 100% !important;
+        max-width: 50% !important;
+        white-space: normal;
+        word-wrap: break-word;
+        font-size: 16px;
+        padding: 8px 12px;
+    }
+
+    /* 确保下拉框在移动端的正确显示 */
+    select.form-select {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* 文章列表样式 */
+.articles-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+    overflow-y: auto;
+    padding: 20px;
+    min-height: 300px;
+}
+
+/* 文章卡片基础样式 */
+.article-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 15px;
+    height: 100%;
+    transition: transform 0.2s;
+}
+
+.article-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.article-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.article-category {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.article-status {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background-color: #e9ecef;
+}
+
+.article-title {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.article-meta {
+    display: flex;
+    gap: 15px;
+    color: #6c757d;
+    font-size: 0.8rem;
+    margin-bottom: 15px;
+}
+
+.article-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+/* 文章列表结束 */
+
+/* 分页容器样式 */
+.pagination-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    margin-top: auto;
+}
+
+/* 每页显示数量选择器样式 */
+.page-size-selector {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.page-size-selector .form-select {
+    width: auto;
+    min-width: 80px;
+}
+
+/* 页面信息显示样式 */
+.page-info {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .pagination-container .d-flex {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .page-size-selector, .page-info {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .pagination {
+        margin: 10px 0;
+    }
+}
+/* 分页样式结束 */
+/* 文章管理页面结束 */

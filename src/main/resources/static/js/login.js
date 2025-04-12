@@ -1,35 +1,5 @@
 // 登录所用相关 JS代码
 
-
-
-// Function 1 : 刷新验证码
-async function refreshCaptcha() {
-    const img = document.getElementById('captchaImage');
-    try {
-        // 发起 GET 请求
-        const response = await fetch('/system/captcha/getCaptcha', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json', // 指定接收 JSON 数据
-            },
-        });
-        // 检查响应状态码
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        // 处理成功结果
-        if (data.code === 200) { // 假设 Result.success 返回的 code 是 200
-            img.src = data.data.image.startsWith('data:image') ? data.data.image : `data:image/png;base64,${data.data.image}`;
-            document.getElementById('captchaId').value = data.data.code;
-        } else {
-            handleError('获取验证码失败')
-        }
-    } catch (error) {
-        handleError('获取验证码失败')
-    }
-}
-
 // Function 2 : 登录校验(校验用户名、密码、验证码不为空)
 async function validateForm() {
     console.log('调用校验方法 1')
@@ -68,51 +38,6 @@ async function validateForm() {
     return true;
 }
 
-
-//  Function 3 : 验证码校验
-async function validateCaptcha(captchaInput, captchaIdInput) {
-
-    console.log('调用校验方法 2')
-
-    const errorMessageDiv = document.getElementById('errorMessage');
-    errorMessageDiv.innerHTML = '';
-    hideErrorMessage(errorMessageDiv);
-
-    // 创建请求体
-    const requestBody = JSON.stringify({
-        captcha: captchaInput,
-        captchaId: captchaIdInput
-    });
-
-    try {
-        const response = await fetch('/api/captcha/checkCaptcha', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: requestBody
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        // 尝试解析JSON并捕获任何潜在的解析错误
-        const data = await response.json();
-        if (data && data.code === "200" && data.data.valid) {
-            console.log("验证码有效");
-            return true;
-        } else {
-            displayError('验证码无效，请重试', errorMessageDiv);
-            return false;
-        }
-    } catch (error) {
-        // 网络错误或服务器错误时的操作
-        displayError('网络错误，请稍后再试', errorMessageDiv);
-        console.error('There has been a problem with your fetch operation:', error);
-        return false;
-    }
-}
 
 
 

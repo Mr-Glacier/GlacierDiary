@@ -28,7 +28,7 @@ import java.util.Map;
  */
 @RestController
 @Api(tags = "Oauth 认证模块")
-@RequestMapping("/oauth")
+@RequestMapping("/system/oauth")
 public class OauthController {
 
     private final SysUserService sysUserService;

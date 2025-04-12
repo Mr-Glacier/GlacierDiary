@@ -103,7 +103,7 @@
                     registerCode: document.getElementById('registerCode').value.trim()
                 });
                 console.log(formData)
-                const response = await fetch('/oauth/register', {
+                const response = await fetch('/system/oauth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

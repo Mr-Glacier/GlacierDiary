@@ -1,0 +1,18 @@
+/* 全局字体样式引入 */
+/* 这个字体主要用于 Logo */
+@font-face {
+    font-family: 'QwitcherGrypen';
+    src: url('../fonts/QwitcherGrypen-Bold.ttf') format('truetype'),
+    url('../fonts/QwitcherGrypen-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+/* 用于菜单使用 */
+@font-face {
+    font-family: 'chengKaiTi';
+    src: url('../fonts/chengrongguangkekai.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
