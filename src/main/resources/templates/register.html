@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Glacier Diary 注册页面">
+    <title>Glacier Diary - 注册</title>
+    <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="preload" th:href="@{/images/backgroundclinet.jpg}" as="image">
+</head>
+
+<body>
+<div class="login-container">
+    <div class="login-card">
+        <h1 class="login-title">Glacier Diary</h1>
+
+        <form id="registerForm" method="post" th:action="@{/oauth/register}" novalidate>
+            <div class="form-group">
+                <label for="username" class="form-label">用户名</label>
+                <input type="text" id="username" name="username" class="form-input"
+                       placeholder="请输入用户名" required
+                       aria-describedby="usernameHelp">
+                <small id="usernameHelp" class="form-text">4-16位字母、数字或下划线</small>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">密码</label>
+                <input type="password" id="password" name="password"
+                       class="form-input" placeholder="请输入密码" required
+                       aria-describedby="passwordHelp">
+                <small id="passwordHelp" class="form-text">至少8位，包含字母和数字</small>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword" class="form-label">确认密码</label>
+                <input type="password" id="confirmPassword" name="confirmPassword"
+                       class="form-input" placeholder="请再次输入密码" required>
+            </div>
+
+            <div class="form-group">
+                <label for="registerCode" class="form-label">注册码</label>
+                <input type="text" id="registerCode" name="registerCode"
+                       class="form-input" placeholder="请输入注册码" required>
+                <small class="form-text">请联系管理员获取注册码</small>
+            </div>
+            <button type="submit" id="registerButton" class="submit-button">
+                <span class="button-text">注册</span>
+                <span class="spinner" aria-hidden="true"></span>
+            </button>
+
+            <div class="login-footer">
+                <span>已有账号？</span>
+                <a onclick="redirectToLogin()" class="register-link">
+                    立即登录
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 消息提示组件 -->
+<div id="messageToast" class="toast-message" role="alert" aria-live="assertive">
+    <div class="toast-content">
+        <span id="toastMessage"></span>
+    </div>
+</div>
+
+<script>
+    <!--  页面跳转逻辑  -->
+    function redirectToLogin() {
+        window.history.replaceState({}, '', '/login'); // 替换历史记录
+        window.location.href = '/login';
+    }
+</script>
+<script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
+</body>
+</html>

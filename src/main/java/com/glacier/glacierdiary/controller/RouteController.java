@@ -20,5 +20,14 @@ public class RouteController {
         return "login";
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+    @GetMapping("/register")
+    public String register() {
+        return "register";
+    }
 
 }

@@ -53,7 +53,7 @@
             </button>
 
             <div class="login-footer">
-                <a th:href="@{/adminWeb/adminRegister}" class="register-link">
+                <a onclick="loginToRegister()" class="register-link">
                     注册账号
                 </a>
             </div>
@@ -72,6 +72,12 @@
     window.onload = function () {
         refreshCaptcha();
     };
+
+    <!--  页面跳转逻辑  -->
+    function loginToRegister() {
+        window.history.replaceState({}, '', '/register'); // 替换历史记录
+        window.location.href = '/register';
+    }
 </script>
 <script th:src="@{/js/login.js}" defer></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
