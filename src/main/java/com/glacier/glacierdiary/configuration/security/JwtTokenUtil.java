@@ -28,6 +28,8 @@ public class JwtTokenUtil {
     private static final String CLAIM_KEY_USERNAME = "sub";
     private static final String CLAIM_KEY_CREATED = "created";
 
+    private static final String CLAIM_KEY_UID = "UID";
+
     /**
      * 密钥
      */
@@ -122,10 +124,11 @@ public class JwtTokenUtil {
     /**
      * 根据用户信息生成token
      */
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, long uid) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
         claims.put(CLAIM_KEY_CREATED, new Date());
+        claims.put(CLAIM_KEY_UID, uid);
         return generateToken(claims);
     }
 
@@ -151,6 +154,14 @@ public class JwtTokenUtil {
     public String getJti(String token) {
         Claims claims = getClaimsFromToken(token);
         return claims.getId();
+    }
+
+    /**
+     * 从token中获取用户ID
+     */
+    public Long getUidFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return Long.parseLong(claims.get(CLAIM_KEY_UID).toString());
     }
 
 }

@@ -23,7 +23,7 @@ import java.util.UUID;
  */
 @RestController
 @Api(tags = "验证码模块")
-@RequestMapping("/system/captcha")
+@RequestMapping("/api/system/captcha")
 public class CaptchaController {
 
     private final RedisService redisService;

@@ -53,7 +53,7 @@ async function refreshCaptcha() {
     const img = document.getElementById('captchaImage');
     try {
         // 发起 GET 请求
-        const response = await fetch('/system/captcha/getCaptcha', {
+        const response = await fetch('/api/system/captcha/getCaptcha', {
             method: 'GET',
             headers: {
                 'Accept': 'application/json', // 指定接收 JSON 数据
@@ -80,7 +80,7 @@ async function validateCaptcha(captchaInput, captchaIdInput) {
     });
     console.log('输入的验证码:' + captchaInput + '  验证码ID:' + captchaIdInput)
     try {
-        const response = await fetch('/system/captcha/checkCaptcha', {
+        const response = await fetch('/api/system/captcha/checkCaptcha', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

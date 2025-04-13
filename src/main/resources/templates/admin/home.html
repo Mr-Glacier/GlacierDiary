@@ -205,7 +205,7 @@
                         <div class="filter-content">
                             <!-- 新建文章按钮 -->
                             <div class="filter-group">
-                                <button class="btn btn-primary w-100">
+                                <button class="btn btn-primary w-100" onclick="goToAddArticle()">
                                     <i class="bi bi-plus-lg"></i> 新建文章
                                 </button>
                             </div>
@@ -555,6 +555,8 @@
     });
 </script>
 <script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
+<script th:src="@{/js/home.js}" defer></script>
+<script th:src="@{/js/OauthRequest.js}" defer></script>
 </body>
 
 </html>

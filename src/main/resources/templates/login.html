@@ -69,31 +69,10 @@
 </div>
 
 <script>
-    window.onload = function () {
-        // 登录首页应该验证登录信息是否过期,如果没有过期则跳转到系统首页
-        if (localStorage.getItem('GlacierDiaryToken') === null) {
-            refreshCaptcha();
-        } else {
-            if (checkLogin(localStorage.getItem('GlacierDiaryToken'))) {
-                // token 完成刷新,跳转首页
-                window.history.replaceState({}, '', '/admin/home'); // 替换历史记录
-                window.location.href = '/admin/home';
-            } else {
-                refreshCaptcha();
-            }
-        }
-    };
-
-    <!--  页面跳转逻辑  -->
-    function loginToRegister() {
-        window.history.replaceState({}, '', '/register'); // 替换历史记录
-        window.location.href = '/register';
-    }
-
     document.addEventListener('DOMContentLoaded', function () {
+        // 增加事件监听
         const loginButton = document.getElementById('loginButton');
         loginButton.addEventListener('click', handleLogin);
-
         // 登录逻辑
         async function handleLogin(e) {
             e.preventDefault();
@@ -113,7 +92,7 @@
                     username: document.getElementById('username').value.trim(),
                     password: document.getElementById('password').value
                 });
-                const response = await fetch('/system/oauth/login', {
+                const response = await fetch('/api/system/oauth/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -166,9 +145,31 @@
             return true;
         }
     });
+    window.onload = async function () {
+        // 登录首页应该验证登录信息是否过期,如果没有过期则跳转到系统首页
+        const token = localStorage.getItem('GlacierDiaryToken');
+        if (token === null) {
+            await refreshCaptcha();
+        } else {
+            const valid = await checkLogin(token);
+            if (valid) {
+                // token 完成刷新,跳转首页
+                window.history.replaceState({}, '', '/admin/home'); // 替换历史记录
+                window.location.href = '/admin/home';
+            }else {
+                await refreshCaptcha();
+            }
+        }
+    }
+
+    <!--  页面跳转逻辑  -->
+    function loginToRegister() {
+        window.history.replaceState({}, '', '/register'); // 替换历史记录
+        window.location.href = '/register';
+    }
+
 
 </script>
-<script th:src="@{/js/login.js}" defer></script>
 <script th:src="@{/js/general.js}" defer></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
 </body>

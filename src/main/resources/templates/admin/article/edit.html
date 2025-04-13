@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文章编辑页面</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/css/bootstrap-icons.css}">
+  <link rel="stylesheet" th:href="@{/css/vditor.css}">
+  <link rel="stylesheet" th:href="@{/css/globalfont.css}">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: url("/images/backgroundclinet.jpg") no-repeat center center;
+      background-size: cover;
+    }
+
+    .navbar {
+      background: #183e88;
+      color: white;
+      padding: 0.25rem 1rem;
+      height: 48px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-brand {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-left: 1rem;
+      background: #183e88;
+      color: white !important;
+      font-family: 'QwitcherGrypen', sans-serif;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      user-select: none;
+    }
+
+    .main-container {
+      height: calc(100vh - 48px);
+      overflow: hidden;
+      padding: 1rem;
+      background-color: rgba(245, 245, 245, 0.55);
+      backdrop-filter: blur(5px);
+    }
+
+    .editor-container {
+      height: calc(100vh - 48px - 2rem);
+      padding: 1.7rem;
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* 右侧容器样式 */
+    .sidebar {
+      height: calc(100vh - 48px - 1rem);
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-card {
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 1rem;
+      background-color: #fff;
+      margin-bottom: 0.75rem;
+      font-family: 'chengKaiTi', sans-serif;
+    }
+
+    .sidebar-card:last-child {
+      margin-top: auto;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .action-buttons {
+      padding-top: 0.75rem;
+      border-top: 1px solid #eee;
+    }
+
+    /* 按钮组样式优化 */
+    .btn-action {
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-action:last-child {
+      margin-bottom: 0;
+    }
+
+    /* 标签容器高度优化 */
+    .tags-container {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .tag-item {
+      display: inline-block;
+      margin: 0.25rem;
+      padding: 0.35rem 0.75rem;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    /* 添加英文标签样式 */
+    .tag-item.en {
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .tag-item:hover {
+      background-color: #e9ecef;
+    }
+
+    .tag-item.selected {
+      background-color: #0648cc;
+      color: white;
+      border-color: #0648cc;
+    }
+
+    /* 为已选择的英文标签添加样式 */
+    .selected-tag.en {
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    .selected-tags {
+      margin-top: 0.2rem;
+      min-height: 0.5rem;
+    }
+
+    .selected-tag {
+      display: inline-block;
+      margin: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      background-color: #0648cc;
+      color: white;
+      border-radius: 2rem;
+      font-size: 0.875rem;
+    }
+
+    .selected-tag .remove-tag {
+      margin-left: 0.5rem;
+      cursor: pointer;
+    }
+
+    /* 标签样式优化 end*/
+
+
+
+
+    #vditor {
+      height: 100%;
+      min-height: calc(100vh - 48px - 6rem);
+      border-radius: 4px;
+    }
+
+
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+
+    .feedback-text {
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+
+      .editor-container,
+      .sidebar {
+        height: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<nav class="navbar">
+  <div class="container-fluid">
+    <a href="javascript:history.back()" class="btn btn-outline-light btn-sm">
+      <i class="bi bi-arrow-left"></i> 返回
+    </a>
+    <span class="navbar-brand"> GlacierDiary - Editor </span>
+  </div>
+</nav>
+
+<div class="main-container">
+  <div class="row g-0">
+    <div class="col-md-8 editor-container">
+      <div id="vditor"></div>
+    </div>
+    <div class="col-md-4 sidebar">
+      <div class="sidebar-card">
+        <div class="form-group">
+          <label for="title" class="form-label">文章标题:</label>
+          <input type="text" class="form-control" id="title" placeholder="请输入文章标题">
+          <div id="titleFeedback" class="feedback-text text-danger"></div>
+        </div>
+        <div class="form-group">
+          <label for="category" class="form-label">选择分类:</label>
+          <select class="form-select" id="category">
+            <option value="">请选择...</option>
+            <option value="news">新闻</option>
+            <option value="tech">科技</option>
+            <option value="sports">体育</option>
+          </select>
+          <div id="categoryFeedback" class="feedback-text text-danger"></div>
+        </div>
+        <div class="form-group mb-0">
+          <label class="form-label">选择标签:</label>
+          <div class="selected-tags" id="selectedTags"></div>
+          <div class="tags-container" id="tagsContainer">
+            <!-- 标签将通过JavaScript动态添加 -->
+          </div>
+          <div id="tagsFeedback" class="feedback-text text-muted">最多可选择5个标签</div>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="action-buttons">
+          <div class="row g-2">
+            <div class="col-12">
+              <button class="btn btn-primary w-100 btn-action" onclick="saveArticle()">
+                <i class="bi bi-save"></i> 保存文章
+              </button>
+            </div>
+            <div class="col-12">
+              <button class="btn btn-success w-100 btn-action" onclick="publishArticle()">
+                <i class="bi bi-send"></i> 发布文章
+              </button>
+            </div>
+            <div class="col-12">
+              <button class="btn btn-secondary w-100 btn-action" onclick="unpublishArticle()">
+                <i class="bi bi-x-circle"></i> 取消发布
+              </button>
+            </div>
+            <div class="col-12">
+              <button class="btn btn-outline-danger w-100 btn-action" onclick="deleteArticle()">
+                <i class="bi bi-trash"></i> 删除文章
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 引入 Bootstrap JS -->
+<script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
+<!-- 引入 Vditor JS -->
+<script th:src="@{/js/vditor.js}" defer></script>
+<script>
+  // 预定义的标签列表
+  const availableTags = [
+    { id: 'tech', name: 'linux' },
+    { id: 'life', name: 'java' },
+    { id: 'travel', name: 'python' },
+    { id: 'food', name: 'GO' },
+    { id: 'sports', name: 'Ai' },
+    { id: 'movie', name: 'Main' },
+    { id: 'music', name: 'Model' },
+    { id: 'book', name: '读书' },
+    { id: 'art', name: '艺术' },
+    { id: 'history', name: '历史' },
+    { id: 'science', name: '科学' },
+    { id: 'nature', name: '自然' },
+    { id: 'health', name: '健康' },
+    { id: 'education', name: '教育' },
+    { id: 'fashion', name: '时尚' }
+  ];
+  // 已选择的标签
+  let selectedTags = [];
+  const MAX_TAGS = 5;
+
+  let vditor;
+  // 初始化 Vditor
+  vditor = new Vditor('vditor', {
+    height: '100%',
+    mode: 'ir',
+    after: () => {
+      const savedContent = localStorage.getItem('vditor-content');
+      if (savedContent) {
+        vditor.setValue(savedContent);
+      }
+    },
+    preview: {
+      delay: 100,
+      maxLength: 5000,
+      theme: {
+        current: 'light',
+        list: {
+          'light': '明亮',
+          'dark': '暗黑',
+          'wechat': '微信',
+          'ant-design': 'Ant Design'
+        }
+      }
+    },
+    outline: {
+      enable: true,
+      position: 'left'
+    },
+    toolbar: [
+      'outline',
+      'emoji', 'headings', 'bold', 'italic', 'strike', 'link',
+      '|',
+      'list', 'ordered-list', 'check', 'outdent', 'indent',
+      '|',
+      'quote', 'line', 'code', 'inline-code',
+      '|',
+      'upload', 'table',
+      '|',
+      'undo', 'redo',
+      '|',
+      'edit-mode', 'content-theme', 'code-theme',
+      'fullscreen', 'preview'
+    ],
+    table:{
+      enable: true,
+      maxWidth: 1000,
+      maxHeight: 1000
+    },
+    input: (value) => {
+      localStorage.setItem('vditor-content', value);
+    },
+    theme: 'light',
+    // 添加主题监听
+    customTheme: {
+      path: 'https://cdn.jsdelivr.net/npm/vditor@3.9.3/dist/css/content-theme'
+    }
+  });
+
+  // 修改主题切换函数
+  function toggleTheme(themeName) {
+    // 更新预览主题
+    vditor.setContentTheme(themeName);
+
+    // 同步更新编辑器主题
+    if (themeName === 'dark') {
+      vditor.setTheme('dark');
+      vditor.setCodeTheme('dracula');
+    } else {
+      vditor.setTheme('light');
+      vditor.setCodeTheme('github');
+    }
+  }
+
+  // 监听工具栏的主题切换按钮
+  document.addEventListener('click', (e) => {
+    const themeButton = e.target.closest('[data-type="content-theme"]');
+    if (themeButton) {
+      const themeName = themeButton.getAttribute('data-value') || 'light';
+      toggleTheme(themeName);
+    }
+  });
+
+  // 更新已选标签的显示
+  function updateSelectedTagsDisplay() {
+    const selectedTagsContainer = document.getElementById('selectedTags');
+    selectedTagsContainer.innerHTML = '';
+
+    if (selectedTags.length === 0) {
+      selectedTagsContainer.innerHTML = '<span class="text-muted">未选择标签</span>';
+      return;
+    }
+
+    selectedTags.forEach(tag => {
+      const tagElement = document.createElement('span');
+      tagElement.className = 'selected-tag';
+      tagElement.innerHTML = `${tag.name} <span class="remove-tag" data-id="${tag.id}">&times;</span>`;
+      selectedTagsContainer.appendChild(tagElement);
+    });
+
+    // 为移除按钮添加事件
+    document.querySelectorAll('.remove-tag').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const tagId = e.target.dataset.id;
+        const tag = availableTags.find(t => t.id === tagId);
+        if (tag) toggleTag(tag);
+        e.stopPropagation();
+      });
+    });
+  }
+  // 初始化标签选择器
+  function initTagSelector() {
+    const tagsContainer = document.getElementById('tagsContainer');
+    tagsContainer.innerHTML = '';
+
+    // 创建标签元素
+    availableTags.forEach(tag => {
+      const tagElement = document.createElement('span');
+      tagElement.className = 'tag-item';
+
+      // 检测是否为英文标签
+      if (/^[a-zA-Z0-9\s]+$/.test(tag.name)) {
+        tagElement.classList.add('en');
+      }
+
+      tagElement.dataset.id = tag.id;
+      tagElement.textContent = tag.name;
+
+      // 如果标签已被选中，添加selected类
+      if (selectedTags.some(t => t.id === tag.id)) {
+        tagElement.classList.add('selected');
+      }
+
+      // 添加点击事件
+      tagElement.addEventListener('click', () => toggleTag(tag));
+
+      tagsContainer.appendChild(tagElement);
+    });
+
+    updateSelectedTagsDisplay();
+  }
+
+  // 更新已选标签的显示
+  function updateSelectedTagsDisplay() {
+    const selectedTagsContainer = document.getElementById('selectedTags');
+    selectedTagsContainer.innerHTML = '';
+
+    if (selectedTags.length === 0) {
+      selectedTagsContainer.innerHTML = '<span class="text-muted">未选择标签</span>';
+      return;
+    }
+
+    selectedTags.forEach(tag => {
+      const tagElement = document.createElement('span');
+      tagElement.className = 'selected-tag';
+
+      // 检测是否为英文标签
+      if (/^[a-zA-Z0-9\s]+$/.test(tag.name)) {
+        tagElement.classList.add('en');
+      }
+
+      tagElement.innerHTML = `${tag.name} <span class="remove-tag" data-id="${tag.id}">&times;</span>`;
+      selectedTagsContainer.appendChild(tagElement);
+    });
+
+    // 为移除按钮添加事件
+    document.querySelectorAll('.remove-tag').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const tagId = e.target.dataset.id;
+        const tag = availableTags.find(t => t.id === tagId);
+        if (tag) toggleTag(tag);
+        e.stopPropagation();
+      });
+    });
+  }
+  // 切换标签选择状态
+  function toggleTag(tag) {
+    const index = selectedTags.findIndex(t => t.id === tag.id);
+
+    if (index === -1) {
+      // 如果标签未被选中且未达到最大数量，则添加
+      if (selectedTags.length < MAX_TAGS) {
+        selectedTags.push(tag);
+        document.querySelector(`.tag-item[data-id="${tag.id}"]`).classList.add('selected');
+      } else {
+        alert(`最多只能选择${MAX_TAGS}个标签`);
+        return;
+      }
+    } else {
+      // 如果标签已被选中，则移除
+      selectedTags.splice(index, 1);
+      document.querySelector(`.tag-item[data-id="${tag.id}"]`).classList.remove('selected');
+    }
+
+    updateSelectedTagsDisplay();
+  }
+  // 添加取消发布功能
+  function unpublishArticle() {
+    const title = document.getElementById('title').value.trim();
+
+    if (!title) {
+      document.getElementById('titleFeedback').textContent = '请输入文章标题以识别要取消发布的文章';
+      return;
+    }
+
+    if (confirm(`确定要取消发布《${title}》吗？`)) {
+      // 这里应该发送到服务器进行取消发布操作
+      // 示例代码，实际应用中需要替换为真实的API调用
+      console.log('取消发布文章:', title);
+      alert('文章已取消发布');
+    }
+  }
+
+  // 修改保存文章函数，使用新的标签选择方式
+  function saveArticle() {
+    const title = document.getElementById('title').value.trim();
+    const category = document.getElementById('category').value;
+    const content = vditor.getValue();
+
+    // 基本验证
+    if (!title) {
+      document.getElementById('titleFeedback').textContent = '请输入文章标题';
+      return;
+    } else {
+      document.getElementById('titleFeedback').textContent = '';
+    }
+
+    // 保存到本地存储（实际应用中应该发送到服务器）
+    const article = {
+      title,
+      category,
+      tags: selectedTags,
+      content,
+      lastSaved: new Date().toISOString()
+    };
+
+    localStorage.setItem('article-draft', JSON.stringify(article));
+    alert('文章已保存');
+  }
+
+  // 修改发布文章函数
+  function publishArticle() {
+    const title = document.getElementById('title').value.trim();
+    const category = document.getElementById('category').value;
+    const content = vditor.getValue();
+
+    // 基本验证
+    if (!title) {
+      document.getElementById('titleFeedback').textContent = '请输入文章标题';
+      return;
+    }
+
+    if (!category) {
+      document.getElementById('categoryFeedback').textContent = '请选择分类';
+      return;
+    }
+
+    if (!content || content.length < 10) {
+      alert('文章内容太短，无法发布');
+      return;
+    }
+
+    // 这里应该发送到服务器
+    // 示例代码，实际应用中需要替换为真实的API调用
+    const articleData = {
+      title,
+      category,
+      tags: selectedTags,
+      content
+    };
+
+    console.log('发布文章数据:', articleData);
+    alert('文章已发布');
+  }
+
+  // 修改删除文章函数
+  function deleteArticle() {
+    if (confirm('确定要删除这篇文章吗？此操作不可撤销。')) {
+      // 清除本地存储
+      localStorage.removeItem('vditor-content');
+      localStorage.removeItem('article-draft');
+
+      // 重置表单
+      document.getElementById('title').value = '';
+      document.getElementById('category').value = '';
+      selectedTags = [];
+      initTagSelector();
+      vditor.setValue('');
+
+      alert('文章已删除');
+    }
+  }
+  // 页面加载时尝试恢复草稿
+  document.addEventListener('DOMContentLoaded', function () {
+    // 初始化标签选择器
+    initTagSelector();
+
+    const savedArticle = localStorage.getItem('article-draft');
+    if (savedArticle) {
+      try {
+        const article = JSON.parse(savedArticle);
+        document.getElementById('title').value = article.title || '';
+        document.getElementById('category').value = article.category || '';
+
+        // 恢复已保存的标签
+        if (article.tags && Array.isArray(article.tags)) {
+          selectedTags = article.tags;
+          initTagSelector(); // 重新初始化标签选择器以反映已保存的选择
+        }
+      } catch (e) {
+        console.error('Error parsing saved article:', e);
+      }
+    }
+  });
+</script>
+</body>
+
+</html>

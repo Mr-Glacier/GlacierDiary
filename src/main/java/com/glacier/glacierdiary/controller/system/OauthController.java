@@ -29,7 +29,7 @@ import java.util.Map;
  */
 @RestController
 @Api(tags = "Oauth 认证模块")
-@RequestMapping("/system/oauth")
+@RequestMapping("/api/system/oauth")
 public class OauthController {
 
     private final SysUserService sysUserService;
@@ -77,7 +77,7 @@ public class OauthController {
             }
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String token = jwtTokenUtil.generateToken(userDetails);
+            String token = jwtTokenUtil.generateToken(userDetails,currentUser.getId());
             return Result.success(token);
         } catch (org.springframework.security.core.AuthenticationException e) {
             // 认证失败处理
@@ -147,9 +147,11 @@ public class OauthController {
      */
     @ApiOperation("刷新认证")
     @GetMapping("/refreshToken")
-    public Result<String> refreshToken(@RequestParam("token") String token) {
-        if (jwtTokenUtil.canRefresh(token)) {
-            return Result.success(jwtTokenUtil.refreshToken(token));
+    public Result<String> refreshToken(@RequestHeader("Authorization") String token) {
+        String tokenHead = "Bearer ";
+        String realToken = token.replace(tokenHead, "");
+        if (jwtTokenUtil.canRefresh(realToken)) {
+            return Result.success(jwtTokenUtil.refreshToken(realToken));
         } else {
             return Result.failed("token已失效");
         }
