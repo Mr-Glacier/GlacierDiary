@@ -8,7 +8,9 @@
     <title>Glacier Diary - 注册</title>
     <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.css}">
     <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/css/general.css}">
     <link rel="preload" th:href="@{/images/backgroundclinet.jpg}" as="image">
 </head>
 
@@ -26,20 +28,30 @@
                 <small id="usernameHelp" class="form-text">4-16位字母、数字或下划线</small>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="position: relative;">
                 <label for="password" class="form-label">密码</label>
                 <input type="password" id="password" name="password"
                        class="form-input" placeholder="请输入密码" required
                        autocomplete="new-password"
-                       aria-describedby="passwordHelp">
+                       aria-describedby="passwordHelp"
+                       style="padding-right: 2.5rem;">
+                <i class="bi bi-eye-slash" id="togglePassword"
+                   style="position: absolute; right: 10px; top: 60%; transform: translateY(-50%);
+              cursor: pointer; font-size: 1.2rem; color: #666;"
+                   onclick="togglePasswordVisibility(event, 'password')"></i>
                 <small id="passwordHelp" class="form-text">至少8位，包含字母和数字</small>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="position: relative;">
                 <label for="confirmPassword" class="form-label">确认密码</label>
                 <input type="password" id="confirmPassword" name="confirmPassword"
                        class="form-input" placeholder="请再次输入密码" required
-                       autocomplete="new-password">
+                       autocomplete="new-password"
+                       style="padding-right: 2.5rem;">
+                <i class="bi bi-eye-slash" id="toggleConfirmPassword"
+                   style="position: absolute; right: 10px; top: 75%; transform: translateY(-50%);
+              cursor: pointer; font-size: 1.2rem; color: #666;"
+                   onclick="togglePasswordVisibility(event, 'confirmPassword')"></i>
             </div>
 
             <div class="form-group">
@@ -74,6 +86,17 @@
 </div>
 
 <script>
+    function togglePasswordVisibility(event, inputId) {
+        const input = document.getElementById(inputId);
+        const icon = event.target;
+
+        const isVisible = input.type === "text";
+        input.type = isVisible ? "password" : "text";
+
+        icon.classList.toggle("bi-eye", !isVisible);
+        icon.classList.toggle("bi-eye-slash", isVisible);
+    }
+
     <!--  页面跳转逻辑  -->
     function redirectToLogin() {
         window.history.replaceState({}, '', '/login'); // 替换历史记录
@@ -103,7 +126,7 @@
                     registerCode: document.getElementById('registerCode').value.trim()
                 });
                 console.log(formData)
-                const response = await fetch('/system/oauth/register', {
+                const response = await fetch('/api/system/oauth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
