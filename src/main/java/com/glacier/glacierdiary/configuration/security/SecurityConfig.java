@@ -49,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 ).permitAll()
                 // OAuth 认证模块无需权限校验
                 .antMatchers("/oauth/**").permitAll()
+                .antMatchers("/api/system/**").permitAll()
                 // 验证码模块无需权限校验
                 .antMatchers("/api/captcha/**").permitAll()
                 // 针对 /api/admin/** 请求需要 ADMIN 权限
