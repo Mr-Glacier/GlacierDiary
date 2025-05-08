@@ -8,14 +8,22 @@ function displayMessage(message, type) {
         toast.classList.add('error');
         toast.classList.remove('success');
         toast.classList.remove('loading');
+        toast.classList.remove('warning');
     } else if (type === 'loading') {
         toast.classList.add('loading')
         toast.classList.remove('success');
         toast.classList.remove('error');
+        toast.classList.remove('warning');
     } else if (type === 'success') {
         toast.classList.add('success');
         toast.classList.remove('error');
         toast.classList.remove('loading');
+        toast.classList.remove('warning');
+    } else if (type === 'warning') {
+        toast.classList.add('warning');
+        toast.classList.remove('success');
+        toast.classList.remove('loading');
+        toast.classList.remove('error');
     }
     toast.style.display = 'block';
     // 自动隐藏 toast（例如 3 秒后）
@@ -32,6 +40,11 @@ function handleError(errorMessage) {
 // 示例：处理成功信息时调用
 function handleSuccess(successMessage) {
     displayMessage(successMessage, 'success');
+}
+
+// 提示消息
+function handleWarning(warningMessage) {
+    displayMessage(warningMessage, 'warning');
 }
 
 // 短暂加载信息
@@ -105,7 +118,7 @@ async function validateCaptcha(captchaInput, captchaIdInput) {
 // ------ 检验当前是否登录 START ---------
 async function checkLogin(token) {
     try {
-        const response = await fetch('/system/oauth/refreshToken', {
+        const response = await fetch('/api/system/oauth/refreshToken', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -113,15 +126,25 @@ async function checkLogin(token) {
                 'Authorization': 'Bearer ' + token
             }
         });
+        if (response.status === 401) {
+            localStorage.removeItem('GlacierDiaryToken');
+            return false;
+        }
+        if (!response.ok) { // 检查HTTP状态码是否表示成功
+            return false;
+        }
+
         const result = await response.json();
         if (result.code === 200) {
-            localStorage.removeItem('GlacierDiaryToken')
-            localStorage.setItem('GlacierDiaryToken', token)
+            localStorage.removeItem('GlacierDiaryToken');
+            localStorage.setItem('GlacierDiaryToken', token);
+            console.log('登录状态已更新'+token);
             return true;
         } else {
             return false;
         }
     } catch (error) {
+        console.error("Error during checking login:", error);
         return false;
     }
 }

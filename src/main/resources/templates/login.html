@@ -169,12 +169,21 @@
         if (token === null) {
             await refreshCaptcha();
         } else {
-            const valid = await checkLogin(token);
-            if (valid) {
-                // token 完成刷新,跳转首页
-                window.history.replaceState({}, '', '/admin/home'); // 替换历史记录
-                window.location.href = '/admin/home';
-            } else {
+            try {
+                const valid = await checkLogin(token); // 使用 await 等待异步函数完成
+                if (valid) {
+                    // token 完成刷新,跳转首页
+                    // 模拟网络延迟或处理时间
+                    setTimeout(() => {
+                        // 使用 History API 替换当前历史记录项而不创建新条目
+                        window.history.replaceState({}, '', '/admin/home');
+                        window.location.replace('/admin/home');
+                    }, 2000); // 延迟2秒
+                } else {
+                    await refreshCaptcha();
+                }
+            } catch (error) {
+                console.error("登录校验出错", error);
                 await refreshCaptcha();
             }
         }

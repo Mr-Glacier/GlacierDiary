@@ -31,7 +31,6 @@ import java.util.Map;
 @Api(tags = "Oauth 认证模块")
 @RequestMapping("/api/system/oauth")
 public class OauthController {
-
     private final SysUserService sysUserService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
@@ -151,7 +150,8 @@ public class OauthController {
         String tokenHead = "Bearer ";
         String realToken = token.replace(tokenHead, "");
         if (jwtTokenUtil.canRefresh(realToken)) {
-            return Result.success(jwtTokenUtil.refreshToken(realToken));
+            String refreshToken = jwtTokenUtil.refreshToken(realToken);
+            return Result.success(refreshToken);
         } else {
             return Result.failed("token已失效");
         }
@@ -159,7 +159,9 @@ public class OauthController {
 
     @ApiOperation("退出认证")
     @GetMapping("/logout")
-    public Result<String> logout(@RequestParam("token") String token) {
+    public Result<String> logout(@RequestHeader("Authorization") String token) {
+        String tokenHead = "Bearer ";
+        token = token.replace(tokenHead, "");
         // 提取 JWT 的唯一标识符 (JTI)
         String jti = jwtTokenUtil.getJti(token);
         Date expiration = jwtTokenUtil.getExpiredDateFromToken(token);

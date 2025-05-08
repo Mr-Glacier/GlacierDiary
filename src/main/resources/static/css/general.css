@@ -1,0 +1,56 @@
+/** 通用样式 */
+
+/* 基础样式重置与变量定义 */
+:root {
+    --message-error-color: #ff5a5a;
+    --message-success-color: #4caf50;
+    --message-loading-color: #868686;
+    --message-warning-color: #ffa500;
+}
+
+/* 消息提示样式 */
+.toast-message {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    color: #333;
+    padding: 14px 28px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    z-index: 1000;
+    display: none;
+    max-width: 90%;
+    width: max-content;
+    animation: slideDown 0.4s ease-out;
+    font-weight: 500;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+}
+
+.toast-message.error {
+    border-left-color: var(--message-error-color);
+    border-right-color: var(--message-error-color);
+}
+
+.toast-message.success {
+    border-left-color: var(--message-success-color);
+    border-right-color: var(--message-success-color);
+}
+
+.toast-message.loading {
+    border-left-color: var(--message-loading-color);
+    border-right-color: var(--message-loading-color);
+}
+
+.toast-message.warning {
+    border-left-color: var(--message-warning-color);
+    border-right-color: var(--message-warning-color);
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

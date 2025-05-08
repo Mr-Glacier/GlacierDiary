@@ -554,6 +554,11 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('dashboard-page').classList.add('active');
     });
+    // 登出功能
+    document.getElementById('logout').addEventListener('click', function(event) {
+        event.preventDefault(); // 阻止默认行为
+        logout()
+    });
 </script>
 <script th:src="@{/js/bootstrap.bundle.min.js}" defer></script>
 <script th:src="@{/js/home.js}" defer></script>
